@@ -1,0 +1,11 @@
+<!DOCTYPE html><html lang="fr"><head><title>Maths</title><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script><script>
+document.addEventListener('DOMContentLoaded', function() {
+    renderMathInElement(document.body, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '$', right: '$', display: false},
+        ],
+        throwOnError : false
+    });
+});
+</script></head><body><h1>Polynôme du second degré</h1><p>Soit une fonction $f$ définie par:</p><p>$f(x) = ax^2 + bx + c$ avec $a, b, c \in \mathbb{R}$</p><p>On cherche à résoudre l'équation $f(x) = 0$.</p><p>On pose le discriminant de $f$: $\Delta = b^2 - 4ac$</p><p>Il y a maintenant plusieurs cas de figure:</p><h2>Le discriminant est strictement positif</h2><p>L'équation admet alors deux solutions réelles:</p><ul><li>$x_1 = \frac{-b - \sqrt {\Delta}}{2a}$</li><li>$x_2 = \frac{-b + \sqrt {\Delta}}{2a}$</li></ul><h2>Le discriminant est nul</h2><p>L'équation n'admet qu'une seule solution réelle: $x = \frac{-b}{2a}$</p><h2>Le discriminant est négatif</h2><p>L'équation n'admet aucune solution réelle.</p></body></html>
