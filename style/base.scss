@@ -24,26 +24,25 @@ body {
 }
 
 nav {
+  $border: solid 1px $bg-1;
+
   position: fixed;
   top: 0;
   height: 100vh;
-  background-color: $bg-3;
   padding: 1rem;
 
   ul {
     list-style: none;
     padding: 0;
-
-    li {
-      margin: 6px 0;
-    }
   }
 
   &.tree {
+    border-right: $border;
     width: $tree;
     left: 0;
   }
   &.sections {
+    border-left: $border;
     width: $sections;
     right: 0;
   }
@@ -51,6 +50,10 @@ nav {
 
 ul {
   margin: 1rem 0;
+}
+
+li {
+  margin: 6px 0;
 }
 
 a {
@@ -64,7 +67,7 @@ a {
 }
 
 .content {
-  $margin: 60px;
+  $margin: 120px;
   max-width: 630px;
   margin: 0 $sections + $margin 0 $tree + $margin;
 }
