@@ -27,7 +27,7 @@
       src = ./.;
 
       buildInputs = [ ssg ];
-      buildPhase = "notchka build --prefix /uni/dist";
+      buildPhase = "notchka build --prefix /uni";
       installPhase = "cp -r build $out";
     };
   });
