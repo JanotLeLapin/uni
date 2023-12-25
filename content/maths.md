@@ -5,22 +5,15 @@ maths: true
 
 # Polynôme du second degré
 
-Soit une fonction $f$ définie par:
+Soit une fonction $f$ définie par $f(x) = ax^2 + bx + c$ avec $a, b, c \in \mathbb{R}$.
 
-$f(x) = ax^2 + bx + c$ avec $a, b, c \in \mathbb{R}$
-
-On cherche à résoudre l'équation $f(x) = 0$.
-
-On pose le discriminant de $f$: $\Delta = b^2 - 4ac$
-
-Il y a maintenant plusieurs cas de figure:
+On cherche à résoudre l'équation $f(x) = 0$. Pour ce faire, on pose le discriminant de $f$: $\Delta = b^2 - 4ac$. Il y a maintenant plusieurs cas de figure.
 
 ## Le discriminant est strictement positif
 
 L'équation admet alors deux solutions réelles:
 
-- $x_1 = \frac{-b - \sqrt {\Delta}}{2a}$
-- $x_2 = \frac{-b + \sqrt {\Delta}}{2a}$
+$$x_1 = \frac{-b - \sqrt {\Delta}}{2a}; x_2 = \frac{-b + \sqrt {\Delta}}{2a}$$
 
 ## Le discriminant est nul
 
