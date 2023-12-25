@@ -67,7 +67,27 @@ a {
 }
 
 .content {
-  $margin: 120px;
   max-width: 630px;
-  margin: 0 $sections + $margin 0 $tree + $margin;
+}
+
+$content-margin: 120px;
+.content {
+  margin-left: $tree + $content-margin;
+  margin-right: $sections + $content-margin;
+}
+
+@media (max-width: 1275px) {
+  .content {
+    margin-right: $content-margin;
+  }
+
+  nav.sections { display: none; }
+}
+
+@media (max-width: 800px) {
+  .content {
+    margin-left: $content-margin;
+  }
+
+  nav.tree { display: none; }
 }
