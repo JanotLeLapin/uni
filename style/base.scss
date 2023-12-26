@@ -24,8 +24,6 @@ body {
 }
 
 nav {
-  $border: solid 1px $bg-1;
-
   position: fixed;
   top: 0;
   height: 100vh;
@@ -37,12 +35,11 @@ nav {
   }
 
   &.tree {
-    border-right: $border;
     width: $tree;
     left: 0;
   }
   &.sections {
-    border-left: $border;
+    border-left: solid 1px $bg-1;
     width: $sections;
     right: 0;
   }
@@ -72,6 +69,7 @@ a {
 
 $content-margin: 120px;
 .content {
+  margin-bottom: 4rem;
   margin-left: $tree + $content-margin;
   margin-right: $sections + $content-margin;
 }
