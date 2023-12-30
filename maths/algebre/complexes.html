@@ -1,0 +1,63 @@
+<!DOCTYPE html><html lang="fr"><head><link rel="stylesheet" href="/uni/dist/style/base.css"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Complexes</title><script defer src="/uni/dist/script/katex.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script></head><body><nav class="tree"><h4>Pages</h4><ul><li><a href="/uni/physique/optique/index.html">Optique</a></li><li><a href="/uni/maths/algebre/complexes.html">Complexes</a></li><li><a href="/uni/index.html">Accueil</a></li></ul></nav><nav class="sections"><h4>Contenu</h4><ul><li><a href="#Nombres Complexes">Nombres Complexes</a></li><li><a href="#Définition">Définition</a></li><li><a href="#Opérations sur les Complexes">Opérations sur les Complexes</a></li><li><a href="#Réel et Imaginaire">Réel et Imaginaire</a></li><li><a href="#Proposition">Proposition</a></li><li><a href="#Conjuguaison">Conjuguaison</a></li><li><a href="#Exemples">Exemples</a></li><li><a href="#Propositions">Propositions</a></li><li><a href="#Affixe d'un point ou vecteur">Affixe d'un point ou vecteur</a></li><li><a href="#Proposition">Proposition</a></li></ul></nav><div class="content"><h1 id="Nombres Complexes">Nombres Complexes</h1>
+<p>Une extension de l'ensemble des nombres réels, avec un nombre particulier imaginaire $i$.</p>
+<h2 id="Définition">Définition</h2>
+<p>Il existe un ensemble que l'on notera $\mathbb{C}$ dont les éléments sont appelés <strong>nombres complexes</strong>.</p>
+<ol>
+<li>$\mathbb{R} \subset \mathbb{C}$.</li>
+<li>$\mathbb{C}$ possède un élément $i$ qui vérifie l'équation $i^2 = -1$.</li>
+<li>Dans $\mathbb{C}$ on peut définir deux opérateurs $+$ et $\times$ généralant celles de $\mathbb{R}$ si on prend en compte le fait que $i^2 = -1$.</li>
+<li>Tout nombre complexe $z \in \mathbb{C}$ s'écrit de façon unique $z = a + ib$ avec $a$ et $b$ sont des réels.</li>
+</ol>
+<h3 id="Opérations sur les Complexes">Opérations sur les Complexes</h3>
+<p>Pour tout $z, z', z'' \in \mathbb{C}$, on a :</p>
+<ol>
+<li>$(z + z') + z'' = z + (z' + z'')$ (associativité)</li>
+<li>$z + 0 = 0 + z = z$ (existence d'un élément neutre)</li>
+<li>$z + (-z') = (-z') = z = 0$ (existence d'une symétrie)</li>
+<li>$z + z' = z' + z$ (commutativité)</li>
+<li>$(zz')z'' = z(z'z'')$ (associativité)</li>
+<li>$z \times 1 = 1 \times z = z$ (élément neutre)</li>
+<li>$z \times (z' + z'') = zz' + zz''$ (distributivité)</li>
+<li>$zz' = z'z$ (commutivité)</li>
+</ol>
+<h2 id="Réel et Imaginaire">Réel et Imaginaire</h2>
+<ul>
+<li>Le réel $a$ s'appelle la <strong>partie réelle</strong> de z. On le note $Re(z)$.</li>
+<li>Le réel $b$ s'appelle la <strong>partie imaginaire</strong> de z. On le note $Im(z)$.</li>
+<li>L'écriture $z = a + ib$ s'appelle l'écriture algébrique.</li>
+</ul>
+<h3 id="Proposition">Proposition</h3>
+<p>Pour tout $z, z' \in \mathbb{C}$ et tout $\lambda \in \mathbb{R}$ :</p>
+<ul>
+<li>$Re(z + \lambda z') = Re(z) + \lambda Re(z')$</li>
+<li>$Im(z + \lambda z') = Im(z) + \lambda Im(z')$</li>
+</ul>
+<h2 id="Conjuguaison">Conjuguaison</h2>
+<p>Soit $z = a + ib \in \mathbb{C}$ avec $a, b \in \mathbb{R}$.</p>
+<p>On appelle le nombre complexe <strong>conjugué</strong> de $z$ le nombre $(a - ib)$ que l'on note $\overline{z}$.</p>
+<h3 id="Exemples">Exemples</h3>
+<ul>
+<li>$\overline{3 - 5i} = 3 + 5i$</li>
+<li>$\overline{(3i - 4)} = -3i -4$</li>
+</ul>
+<h3 id="Propositions">Propositions</h3>
+<p>Pour tous $z, z' \in \mathbb{C}$ on a :</p>
+<ol>
+<li>$\overline{\overline{z}} = z$</li>
+<li>$\overline{z + z'} = \overline{z} + \overline{z'}$</li>
+<li>$\overline{z \times z'} = \overline{z} \times \overline{z'}$</li>
+<li>$\frac{\overline{z}}{\overline{z'}} = \frac{z}{z'}$</li>
+</ol>
+<h2 id="Affixe d'un point ou vecteur">Affixe d'un point ou vecteur</h2>
+<p>Soit $z \in \mathbb{C}$ avec $z = x + iy$ où $x, y \in \mathbb{R}$</p>
+<ul>
+<li>Le point $M(x; y)$ est appelé le <strong>point image</strong> de $z$ et se note $M(z)$ ou $M_z$.</li>
+<li>Le vecteur $\overrightarrow{v(x, y)}$ est appelé le <strong>vecteur image</strong> de $z$ et se note $\overrightarrow{v(z)}$ ou $\overrightarrow{v_z}$.</li>
+</ul>
+<p>On a donc $\overrightarrow{v_z} = \overrightarrow{OM_z}$</p>
+<h3 id="Proposition">Proposition</h3>
+<ol>
+<li>Pour tout $z, z' \in \mathbb{C}$ et pour tout $\lambda \in \mathbb{R}$ : $\overrightarrow{v_{z + \lambda z'}} = \overrightarrow{v_z} + \lambda \overrightarrow{v_z'}$.</li>
+<li>Si $A$ et $B$ sont des points d'affixes respectifs $z_A$ et $z_B$ alors le vecteur $\overrightarrow{AB}$ a pour affixes $z_b - z_a$.</li>
+</ol>
+</div></body></html>
