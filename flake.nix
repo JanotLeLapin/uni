@@ -3,32 +3,36 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs";
-    notchka.url = "github:JanotLeLapin/notchka";
     systems.url = "github:nix-systems/default";
-    flake-utils.url = "github:Numtide/flake-utils";
+    notchka.url = "github:JanotLeLapin/notchka";
   };
 
   outputs = {
     self,
     nixpkgs,
+    systems,
     notchka,
-    flake-utils,
     ...
-  }: flake-utils.lib.eachDefaultSystem (system: let
-    pkgs = import nixpkgs { inherit system; };
-    ssg = notchka.packages.${system}.default;
-  in rec {
-    devShells.default = pkgs.mkShell {
-      packages = [ ssg ];
-    };
-    packages.default = pkgs.stdenv.mkDerivation {
-      name = "uni";
-      version = "0.1.0";
-      src = ./.;
+  }:
+  let
+    eachSystem = nixpkgs.lib.genAttrs (import systems);
+    pkgs = system: import nixpkgs { inherit system; };
+  in {
+    devShells = eachSystem (system: {
+      default = (pkgs system).mkShell {
+        packages = [ (notchka.package { inherit system; dev = true; }) ];
+      };
+    });
+    packages = eachSystem (system: {
+      default = (pkgs system).stdenv.mkDerivation {
+        name = "uni";
+        version = "0.1.0";
+        src = ./.;
 
-      buildInputs = [ ssg ];
-      buildPhase = "notchka build --prefix /uni";
-      installPhase = "cp -r build $out";
-    };
-  });
+        buildInputs = [ (notchka.package { inherit system; dev = false; }) ];
+        buildPhase = "notchka build --prefix /uni";
+        installPhase = "cp -r build $out";
+      };
+    });
+  };
 }
