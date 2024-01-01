@@ -1,6 +1,5 @@
 ---
 title: Optique
-js: [katex]
 katex: true
 ---
 

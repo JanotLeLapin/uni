@@ -1,6 +1,5 @@
 ---
 title: Complexes
-js: [katex]
 katex: true
 ---
 

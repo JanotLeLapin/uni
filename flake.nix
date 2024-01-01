@@ -20,7 +20,11 @@
   in {
     devShells = eachSystem (system: {
       default = (pkgs system).mkShell {
-        packages = [ (notchka.package { inherit system; dev = true; }) ];
+        packages = [ (notchka.package {
+          inherit system;
+          dev = true;
+          katex = true;
+        }) ];
       };
     });
     packages = eachSystem (system: {
@@ -29,7 +33,11 @@
         version = "0.1.0";
         src = ./.;
 
-        buildInputs = [ (notchka.package { inherit system; dev = false; }) ];
+        buildInputs = [ (notchka.package {
+          inherit system;
+          dev = false;
+          katex = true;
+        }) ];
         buildPhase = "notchka build --prefix /uni";
         installPhase = "cp -r build $out";
       };
