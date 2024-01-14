@@ -3,41 +3,35 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs";
-    systems.url = "github:nix-systems/default";
     notchka.url = "github:JanotLeLapin/notchka";
   };
 
   outputs = {
-    self,
     nixpkgs,
-    systems,
     notchka,
     ...
   }:
   let
-    eachSystem = nixpkgs.lib.genAttrs (import systems);
-    pkgs = system: import nixpkgs { inherit system; };
+    eachSystem = fn: nixpkgs.lib.genAttrs [
+      "x86_64-linux"
+      "aarch64-linux"
+    ] (system: let
+      pkgs = import nixpkgs { inherit system; };
+      notchka-pkg = notchka.packages."${system}".default;
+    in (fn { inherit system pkgs notchka-pkg; }));
   in {
-    devShells = eachSystem (system: {
-      default = (pkgs system).mkShell {
-        packages = [ (notchka.package {
-          inherit system;
-          dev = true;
-          katex = true;
-        }) ];
+    devShells = eachSystem ({ pkgs, notchka-pkg, ... }: {
+      default = pkgs.mkShell {
+        buildInputs = [ notchka-pkg ];
       };
     });
-    packages = eachSystem (system: {
-      default = (pkgs system).stdenv.mkDerivation {
+    packages = eachSystem ({ pkgs, notchka-pkg, ... }: {
+      default = pkgs.stdenv.mkDerivation {
         name = "uni";
         version = "0.1.0";
         src = ./.;
 
-        buildInputs = [ (notchka.package {
-          inherit system;
-          dev = false;
-          katex = true;
-        }) ];
+        buildInputs = [ notchka-pkg ];
         buildPhase = "notchka build --prefix /uni";
         installPhase = "cp -r build $out";
       };
