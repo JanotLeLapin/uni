@@ -21,18 +21,29 @@ const { title } = Astro.props;
 	</body>
 </html>
 <style is:global>
-	html {
-		font-family: system-ui, sans-serif;
-	}
-	code {
-		font-family:
-			Menlo,
-			Monaco,
-			Lucida Console,
-			Liberation Mono,
-			DejaVu Sans Mono,
-			Bitstream Vera Sans Mono,
-			Courier New,
-			monospace;
-	}
+:root {
+  --accent-1: #6366f1;
+  --accent-2: #4f46e5;
+  --accent-3: #4338ca;
+  --light-1: #fafafa;
+  --light-2: #e4e4e7;
+  --light-3: #a1a1aa;
+  --dark-1: #18181b;
+  --dark-2: #27272a;
+  --dark-3: #3f3f46;
+}
+html {
+  font-family: system-ui, sans-serif;
+}
+code {
+  font-family:
+    Menlo,
+    Monaco,
+    Lucida Console,
+    Liberation Mono,
+    DejaVu Sans Mono,
+    Bitstream Vera Sans Mono,
+    Courier New,
+    monospace;
+}
 </style>
