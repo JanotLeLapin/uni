@@ -36,7 +36,7 @@ const entry = entries.find(e => e.file.includes(path)) as MarkdownInstance<Recor
 ---
 
 <Layout title={entry.frontmatter.title}>
-  <main set:html={entry.compiledContent()}>
+  <main><Fragment set:html={entry.compiledContent()} /></main>
   <nav class="headings">
     <ul>
       {entry.getHeadings().map(heading => (
