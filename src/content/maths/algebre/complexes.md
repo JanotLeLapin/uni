@@ -1,6 +1,5 @@
 ---
 title: Nombres Complexes
-layout: ../../../layouts/Layout.astro
 ---
 
 # Nombres Complexes
