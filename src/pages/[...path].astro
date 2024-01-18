@@ -33,9 +33,11 @@ const { path } = Astro.params;
 
 const entries = await Astro.glob("../content/**/*.md");
 const entry = entries.find(e => e.file.includes(path)) as MarkdownInstance<Record<string, any>>;
+
+const { title, katex } = entry.frontmatter;
 ---
 
-<Layout title={entry.frontmatter.title}>
+<Layout {title} {katex}>
   <main><Fragment set:html={entry.compiledContent()} /></main>
   <nav class="headings">
     <ul>

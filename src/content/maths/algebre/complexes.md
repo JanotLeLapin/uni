@@ -1,5 +1,6 @@
 ---
 title: Nombres Complexes
+katex: true
 ---
 
 # Nombres Complexes
