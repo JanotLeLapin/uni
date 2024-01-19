@@ -7,6 +7,7 @@
       "@layouts/*": ["./src/layouts/*"],
       "@components/*": ["./src/components/*"],
       "@lib/*": ["./src/lib/*"],
+      "@style/*": ["./src/style/*"],
     },
     "jsx": "react-jsx",
     "jsxImportSource": "preact"

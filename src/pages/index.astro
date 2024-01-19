@@ -1,11 +1,17 @@
 ---
 import Layout from '@layouts/Layout.astro';
+import Timetable from '@components/Timetable';
 ---
 
 <Layout title="Welcome to Astro.">
 	<main>
     <h1>Hello, World!</h1>
     <p>Welcome</p>
+
+    <div>
+      <h2>Emploi du temps</h2>
+      <Timetable client:idle />
+    </div>
 	</main>
 </Layout>
 
