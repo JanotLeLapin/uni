@@ -10,6 +10,14 @@ export type TTEntry = {
   sites: string[];
 }
 
+export type TTDescription = {
+  type: string;
+  location: string;
+  subject: string;
+};
+
+const decodeHTML = (raw: string) => raw.replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(dec));
+
 export const fetchTimetable = async (id: string, date: Date): Promise<TTEntry[]> => {
   const year = date.getFullYear();
   const month = date.getMonth() + 1;
@@ -20,4 +28,9 @@ export const fetchTimetable = async (id: string, date: Date): Promise<TTEntry[]>
     headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8", },
     body
   }).then(res => res.json())
+}
+
+export const parseDescription = (description: string) => {
+  const [type, location, subject] = description.split("\r\n\r\n<br />\r\n\r\n").map(decodeHTML);
+  return { type, location, subject };
 }
