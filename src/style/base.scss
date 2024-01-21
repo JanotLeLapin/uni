@@ -31,8 +31,6 @@ ul {
   padding: 0;
 }
 
-main { max-width: 630px; }
-
 @mixin sidebar($side, $width) {
   position: fixed;
   top: 0;
@@ -48,6 +46,17 @@ nav.headings {
   border-left: 1px solid $light-2;
 }
 
-@media (max-width: 1275px) {
-  nav.headings { display: none; }
+@media (max-width: 1440px) { nav.headings { display: none; } }
+
+@media (max-width: 960px) {
+  nav.navigation {
+    display: none;
+    margin-left: 0;
+  }
+}
+@media (min-width: 960px) {
+  main {
+    max-width: 630px;
+    margin-left: 360px;
+  }
 }
