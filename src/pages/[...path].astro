@@ -3,38 +3,20 @@ import type { GetStaticPaths, MarkdownInstance } from 'astro';
 
 import Layout from '@layouts/Layout.astro';
 
-import fs from 'node:fs';
-import pa from 'node:path';
-
-export type NamedTree = {
-  [key: string]: NamedTree | string[];
-};
-
-export const collections: NamedTree = {
-  maths: ['algebre', 'generale'],
-  info: ['python', 'application'],
-};
-
-export const makePaths = (parents: string[], path: string[]): string[] => {
-  return fs.readdirSync(pa.join(...parents, ...path)).flatMap(entry => {
-    const stat = fs.statSync(pa.join(...parents, ...path, entry));
-    if (stat.isDirectory())
-      return makePaths(parents, [...path, entry]);
-    else
-      return path.join('/') + '/' + entry.split('.')[0];
-  })
-}
-
-export const getStaticPaths = (() =>
-  makePaths([process.cwd(), 'src', 'content'], []).map(path => ({ params: { path } }))
-) satisfies GetStaticPaths;
+export const getStaticPaths = (async () => {
+  const entries = await Astro.glob("../content/**/*.md");
+  const res = entries.map(entry => ({
+    params: { path: entry.file.split("content")[1].split(".md")[0], }
+  }));
+  return res;
+}) as GetStaticPaths;
 
 const { path } = Astro.params;
 
 const entries = await Astro.glob("../content/**/*.md");
-const entry = entries.find(e => e.file.includes(path)) as MarkdownInstance<Record<string, any>>;
+const entry = entries.find(e => e.file.includes(path as string)) as MarkdownInstance<Record<string, any>>;
 
-const { title, katex } = entry.frontmatter;
+const { title, katex } = entry?.frontmatter;
 ---
 
 <Layout {title} {katex}>
