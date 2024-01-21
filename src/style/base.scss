@@ -33,24 +33,19 @@ ul {
 
 main { max-width: 630px; }
 
-nav.headings {
+@mixin sidebar($side, $width) {
   position: fixed;
   top: 0;
-  right: 0;
-  width: 360px;
+  #{$side}: 0;
+  width: $width;
   height: 100vh;
-  border-left: 1px solid $light-2;
   padding: 1rem;
 }
 
-nav.navigation {
-  position: fixed;
-  left: 0;
-  top: 0;
-  border-right: 1px solid $light-2;
-  padding: 1rem;
-  width: 260px;
-  height: 100vh;
+nav.navigation { @include sidebar(left, 260px); }
+nav.headings {
+  @include sidebar(right, 360px);
+  border-left: 1px solid $light-2;
 }
 
 @media (max-width: 1275px) {
