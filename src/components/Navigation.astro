@@ -2,22 +2,10 @@
 const entries = await Astro.glob("../content/**/*.md");
 ---
 
-<nav>
+<nav class="navigation">
   <ul>
     {entries.map(entry => (
       <li><a href={"/uni" + entry.file.split("content")[1].split(".md")[0]}>{entry.frontmatter.title}</a></li>
     ))}
   </ul>
 </nav>
-
-<style>
-nav {
-  position: fixed;
-  left: 0;
-  top: 0;
-  border-right: 1px solid var(--light-2);
-  padding: 1rem;
-  width: 260px;
-  height: 100vh;
-}
-</style>

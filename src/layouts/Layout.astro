@@ -1,8 +1,10 @@
 ---
+import "@style/base.scss";
+
 interface Props {
 	title: string;
   katex?: boolean;
-}
+};
 
 const { title, katex } = Astro.props;
 ---
@@ -23,54 +25,3 @@ const { title, katex } = Astro.props;
 		<slot />
 	</body>
 </html>
-<style is:global>
-:root {
-  --accent-1: #6366f1;
-  --accent-2: #4f46e5;
-  --accent-3: #4338ca;
-  --light-1: #fafafa;
-  --light-2: #e4e4e7;
-  --light-3: #a1a1aa;
-  --dark-1: #18181b;
-  --dark-2: #27272a;
-  --dark-3: #3f3f46;
-}
-html {
-  font-family: system-ui, sans-serif;
-}
-code {
-  font-family:
-    Menlo,
-    Monaco,
-    Lucida Console,
-    Liberation Mono,
-    DejaVu Sans Mono,
-    Bitstream Vera Sans Mono,
-    Courier New,
-    monospace;
-}
-a {
-  color: var(--accent-1);
-  text-decoration: none;
-}
-ul {
-  list-style: none;
-  padding: 0;
-}
-
-main { max-width: 630px; }
-
-nav.headings {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 360px;
-  height: 100vh;
-  border-left: 1px solid var(--light-2);
-  padding: 1rem;
-}
-
-@media (max-width: 1275px) {
-  nav.headings { display: none; }
-}
-</style>
