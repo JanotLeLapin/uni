@@ -22,7 +22,10 @@ const { title, katex } = entry?.frontmatter;
 
 <Layout {title} {katex}>
   <Navigation />
-  <main><Fragment set:html={entry.compiledContent()} /></main>
+  <main>
+    <h1>{entry.frontmatter.title}</h1>
+    <Fragment set:html={entry.compiledContent()} />
+  </main>
   <nav class="headings">
     <ul>
       {entry.getHeadings().map(heading => (
