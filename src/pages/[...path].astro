@@ -2,6 +2,7 @@
 import type { GetStaticPaths, MarkdownInstance } from 'astro';
 
 import Layout from '@layouts/Layout.astro';
+import Navigation from '@components/Navigation.astro';
 
 export const getStaticPaths = (async () => {
   const entries = await Astro.glob("../content/**/*.md");
@@ -20,6 +21,7 @@ const { title, katex } = entry?.frontmatter;
 ---
 
 <Layout {title} {katex}>
+  <Navigation />
   <main><Fragment set:html={entry.compiledContent()} /></main>
   <nav class="headings">
     <ul>
@@ -31,3 +33,9 @@ const { title, katex } = entry?.frontmatter;
     </ul>
   </nav>
 </Layout>
+
+<style>
+main {
+  margin-left: 360px;
+}
+</style>
