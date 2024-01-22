@@ -1,6 +1,5 @@
 ---
 title: Optique Instrumentale
-katex: true
 ---
 
 ## Définitions

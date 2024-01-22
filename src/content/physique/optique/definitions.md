@@ -1,6 +1,5 @@
 ---
 title: Définitions
-katex: true
 ---
 
 ## Vocabulaire

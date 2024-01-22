@@ -1,32 +1,32 @@
 ---
-import type { GetStaticPaths, MarkdownInstance } from 'astro';
-
-import Layout from '@layouts/Layout.astro';
+import Layout from "@layouts/Layout.astro";
+import { getCollection } from "astro:content";
 
 export const getStaticPaths = (async () => {
-  const entries = await Astro.glob("../content/**/*.md");
-  const res = entries.map(entry => ({
-    params: { path: entry.file.split("content")[1].split(".md")[0], }
-  }));
-  return res;
-}) as GetStaticPaths;
+  const categories: ["maths", "physique"] = ["maths", "physique"];
+  const paths = await Promise.all(categories.map(async cat => {
+    const entries = await getCollection(cat);
+    return entries.map(entry => ({
+      params: { path: cat + '/' + entry.slug },
+      props: { entry },
+    }));
+  }))
+  return paths.flat();
+});
 
-const { path } = Astro.params;
-
-const entries = await Astro.glob("../content/**/*.md");
-const entry = entries.find(e => e.file.includes(path as string)) as MarkdownInstance<Record<string, any>>;
-
-const { title, katex } = entry?.frontmatter;
+const { entry } = Astro.props;
+const { title, katex } = entry.data;
+const { Content, headings } = await entry.render();
 ---
 
 <Layout {title} {katex}>
   <main>
-    <h1>{entry.frontmatter.title}</h1>
-    <Fragment set:html={entry.compiledContent()} />
+    <h1>{title}</h1>
+    <Content />
   </main>
   <nav class="headings">
     <ul>
-      {entry.getHeadings().map(heading => (
+      {headings.map(heading => (
         <li style={{ marginLeft: heading.depth * 6 + 'px' }}>
           <a href={'#' + heading.text.toLowerCase().split(' ').join('-')}>{heading.text}</a>
         </li>
