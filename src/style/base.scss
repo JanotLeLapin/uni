@@ -26,11 +26,6 @@ a {
   color: $accent-1;
   text-decoration: none;
 }
-ul {
-  list-style: none;
-  padding: 0;
-}
-
 @mixin sidebar($side, $width) {
   position: fixed;
   top: 0;
@@ -40,10 +35,16 @@ ul {
   padding: 1rem;
 }
 
-nav.navigation { @include sidebar(left, 260px); }
-nav.headings {
-  @include sidebar(right, 360px);
-  border-left: 1px solid $light-2;
+nav {
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+  &.navigation { @include sidebar(left, 260px); }
+  &.headings {
+    @include sidebar(right, 360px);
+    border-left: 1px solid $light-2;
+  }
 }
 
 @media (max-width: 1440px) { nav.headings { display: none; } }
