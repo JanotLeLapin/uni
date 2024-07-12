@@ -20,6 +20,7 @@
     devShells = eachSystem ({ pkgs, ... }: { default = pkgs.callPackage ./shell.nix {}; });
     packages = eachSystem ({ system, pkgs, ... }: {
       default = pkgs.callPackage ./default.nix { markdown = markdown.lib.markdown."${system}" { config = ./config.h; }; };
+      preview = pkgs.callPackage ./preview.nix { uni-content = self.packages."${system}".default; };
     });
   };
 }
