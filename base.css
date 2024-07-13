@@ -3,6 +3,8 @@
 }
 
 :root {
+  --contents-width: 360px;
+
   --neutral-100: #f1f5f9;
   --neutral-200: #e2e8f0;
   --neutral-300: #cbd5e1;
@@ -21,7 +23,23 @@ body {
   font-family: BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   color: var(--neutral-700);
   background: var(--neutral-100);
-  margin: 2rem 6rem;
+}
+
+@media (max-width: 910px) {
+  main {
+    padding: 2rem;
+  }
+
+  nav.contents {
+    display: none;
+  }
+}
+
+@media (min-width: 910px) {
+  main {
+    width: calc(100vw - var(--contents-width) - 14rem);
+    padding: 2rem 6rem;
+  }
 }
 
 h1,
@@ -47,13 +65,11 @@ ul {
 aside {
   background: var(--main-100);
   border-top: solid 4px var(--main-400);
-  width: 420px;
   padding: 1rem;
 }
 
 pre.code {
   background: var(--neutral-200);
-  width: 420px;
   padding: 1rem;
 }
 
@@ -65,7 +81,7 @@ nav.contents {
   position: fixed;
   right: 0;
   top: 0;
-  width: 350px;
+  width: var(--contents-width);
   height: 100vh;
   border-left: solid 1px var(--neutral-300);
   padding: 1rem 0 0 1rem;
