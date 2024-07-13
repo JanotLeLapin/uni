@@ -16,7 +16,8 @@
   --main-500: #6366f1;
   --main-600: #4f46e5;
 
-  --code-string: #0d9488;
+  --code-string: #14b8a6;
+  --code-keyword: #a855f7;
 }
 
 body {
@@ -75,6 +76,10 @@ pre.code {
 
 pre.code span.c-s {
   color: var(--code-string);
+}
+
+pre.code span.c-k {
+  color: var(--code-keyword);
 }
 
 nav.contents {
