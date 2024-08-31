@@ -13,4 +13,9 @@
       echo "$content" > "$dest_file"
     done
   '';
+
+  installPhase = ''
+    mkdir -p $out/static
+    cp app.css $out/static
+  '';
 }

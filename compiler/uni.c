@@ -111,7 +111,10 @@ main(void)
   struct CMarkContext *ctx = cmark_create_context(stdin);
   struct CMarkNode root = cmark_parse(ctx);
 
+  printf("<!DOCTYPE html><head><link rel=\"stylesheet\" href=\"/static/app.css\"/><meta charset=\"utf-8\"/></head><body>");
   compile_node(root);
+  printf("</body>");
+
   cmark_free_node(root);
 
   return 0;
