@@ -1,9 +1,14 @@
 $color-fg: #ABB2BF;
 $color-bg: #282C34;
 
-$color-orange: #D19A66;
-$color-gold: #E5C07B;
+$color-cyan: #56B6C2;
+$color-blue: #61AFEF;
+$color-purple: #C678DD;
 $color-green: #98C379;
+$color-rose: #E06C75;
+$color-orange: #D19A66;
+$color-red: #BE5046;
+$color-gold: #E5C07B;
 
 pre {
   color: $color-fg;
@@ -13,19 +18,23 @@ pre {
 }
 
 code span {
-  &.string_start,
-  &.string_content,
-  &.string_end {
+  &.str {
     color: $color-green;
   }
 
-  &.def,
-  &.if,
-  &.return {
-    color: $color-gold;
+  &.t {
+    color: $color-cyan;
   }
 
-  &.integer {
+  &.fn {
+    color: $color-blue;
+  }
+
+  &.kw {
+    color: $color-purple;
+  }
+
+  &.num {
     color: $color-orange;
   }
 

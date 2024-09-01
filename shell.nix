@@ -1,15 +1,17 @@
 { gcc
+, rust-bin
 , libcmarkdown
 , tree-sitter
 , clang-tools
+, rust-analyzer
 , valgrind
 , grass-sass
 , mkShell
 }: mkShell {
   buildInputs = [
-    gcc
+    gcc (rust-bin.fromRustupToolchainFile ./rust-toolchain.toml)
     libcmarkdown tree-sitter
-    clang-tools valgrind
+    clang-tools rust-analyzer valgrind
     grass-sass
   ];
 }
