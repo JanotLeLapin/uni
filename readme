@@ -1,0 +1,9 @@
+uni - my note taking repository.
+
+this repository is divided in two components:
+
+* notes, licensed under CC BY 4.0
+* compiler, licensed under GNU GPL v3
+
+any file not in these two directories isn't protected by any
+license, so feel free to do whatever you want with them.
