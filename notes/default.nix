@@ -1,9 +1,10 @@
 { uni-compiler
+, grass-sass
 , stdenv
 }: stdenv.mkDerivation {
   name = "uni-notes";
   src = ./.;
-  buildInputs = [ uni-compiler ];
+  buildInputs = [ uni-compiler grass-sass ];
   buildPhase = ''
     find "$src" -type f -name "*.md" | while read -r file; do
       rel_path="''${file#$src/}"
@@ -12,10 +13,8 @@
       mkdir -p "$(dirname "$dest_file")"
       echo "$content" > "$dest_file"
     done
-  '';
 
-  installPhase = ''
     mkdir -p $out/static
-    cp app.css $out/static
+    grass app.scss $out/static/app.css
   '';
 }

@@ -1,0 +1,35 @@
+$color-fg: #ABB2BF;
+$color-bg: #282C34;
+
+$color-orange: #D19A66;
+$color-gold: #E5C07B;
+$color-green: #98C379;
+
+pre {
+  color: $color-fg;
+  background: $color-bg;
+  padding: .5rem;
+  border-radius: 8px;
+}
+
+code span {
+  &.string_start,
+  &.string_content,
+  &.string_end {
+    color: $color-green;
+  }
+
+  &.def,
+  &.if,
+  &.return {
+    color: $color-gold;
+  }
+
+  &.integer {
+    color: $color-orange;
+  }
+
+  &.comment {
+    font-style: italic;
+  }
+}
