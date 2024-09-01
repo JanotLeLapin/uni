@@ -5,11 +5,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1725121449,
-        "narHash": "sha256-7ZI6Y8J/jvQmqunqevv4oYcYh5Zz6+QpIK/qMNdASik=",
+        "lastModified": 1725207739,
+        "narHash": "sha256-v7YVZJhmPjMgDZNUerKgkKOionQSh2fHyz4shh/suVk=",
         "owner": "JanotLeLapin",
         "repo": "cmarkdown",
-        "rev": "83518ffa3faa0577f3df074d98aca3d677e1e07e",
+        "rev": "f66f4de2d1e605ce0d57f8f30dcbcbaa35a7d397",
         "type": "github"
       },
       "original": {
