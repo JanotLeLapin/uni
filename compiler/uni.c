@@ -9,6 +9,25 @@ const TSLanguage *tree_sitter_python(void);
 const TSLanguage *tree_sitter_c(void);
 
 void
+putchar_escaped(char c)
+{
+  switch (c) {
+    case '<':
+      printf("&lt;");
+      break;
+    case '>':
+      printf("&gt;");
+      break;
+    case '&':
+      printf("&ampq;");
+      break;
+    default:
+      putchar(c);
+      break;
+  }
+}
+
+void
 compile_ts_node(TSNode node, const char *sources, unsigned int *last_end)
 {
   TSNode child;
@@ -26,12 +45,12 @@ compile_ts_node(TSNode node, const char *sources, unsigned int *last_end)
     end = ts_node_end_byte(node);
 
     for (i = *last_end; i < start; i++) {
-      putchar(sources[i]);
+      putchar_escaped(sources[i]);
     }
 
     printf("<span class=\"%s\">", ts_node_type(node));
     for (i = start; i < end; i++) {
-      putchar(sources[i]);
+      putchar_escaped(sources[i]);
     }
     printf("</span>");
 
