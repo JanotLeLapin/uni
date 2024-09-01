@@ -6,6 +6,7 @@
 #define COMPILE_CHILDREN(i, node) for (i = 0; i < node.children_count; i++) compile_node(node.children[i]);
 
 const TSLanguage *tree_sitter_python(void);
+const TSLanguage *tree_sitter_c(void);
 
 void
 compile_ts_node(TSNode node, const char *sources, unsigned int *last_end)
@@ -44,6 +45,7 @@ compile_node(struct CMarkNode node)
   size_t i;
   unsigned int last_end;
   TSParser *ts_parser;
+  const TSLanguage *ts_parser_lang = NULL;
   TSTree *ts_tree;
   TSNode ts_node;
 
@@ -72,13 +74,16 @@ compile_node(struct CMarkNode node)
       break;
     case CMARK_CODE:
       if (node.data.code.is_block) {
-        if ('\0' == node.data.code.lang[0]) {
-          printf("<pre><code>%s</code></pre>", node.data.code.content);
-        } else {
+        if (!strcmp("python", node.data.code.lang) || !strcmp("py", node.data.code.lang))
+          ts_parser_lang = tree_sitter_python();
+        else if (!strcmp("c", node.data.code.lang))
+          ts_parser_lang = tree_sitter_c();
+
+        if (ts_parser_lang) {
           last_end = 0;
 
           ts_parser = ts_parser_new();
-          ts_parser_set_language(ts_parser, tree_sitter_python());
+          ts_parser_set_language(ts_parser, ts_parser_lang);
 
           ts_tree = ts_parser_parse_string(ts_parser, NULL, node.data.code.content, strlen(node.data.code.content));
           ts_node = ts_tree_root_node(ts_tree);
@@ -88,6 +93,8 @@ compile_node(struct CMarkNode node)
           printf("</pre></code>");
 
           ts_tree_delete(ts_tree);
+        } else {
+          printf("<pre><code>%s</code></pre>", node.data.code.content);
         }
       } else {
         printf("<code>%s</code>", node.data.code.content);
