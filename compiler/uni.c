@@ -1,5 +1,6 @@
 #include <cmarkdown.h>
 #include <string.h>
+#include <stdlib.h>
 #include <stdio.h>
 
 #define COMPILE_CHILDREN(i, node, stream) for (i = 0; i < node.children_count; i++) compile_node(node.children[i], stream);
@@ -71,6 +72,7 @@ main(void)
   fprintf(file, "</body>");
 
   cmark_free_node(root);
+  free(ctx);
 
   return 0;
 }
