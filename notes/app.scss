@@ -10,6 +10,14 @@ $color-orange: #D19A66;
 $color-red: #BE5046;
 $color-gold: #E5C07B;
 
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+main {
+  margin: 0 4rem;
+}
+
 pre {
   color: $color-fg;
   background: $color-bg;
