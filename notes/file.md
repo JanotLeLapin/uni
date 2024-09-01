@@ -1,21 +1,30 @@
-# Hello, World!
+# Complexité
 
-Welcome to my silly Markdown file! Markdown is a really cool technology when you think about it..
+Complexité des algorithmes
 
-Anyways, here's a bit of [Python](https://www.python.org/) code for you:
+## Somme des nombres de `1` à `n`
 
-```python
-def fibonacci(n):
-  if n == 0:
-    return 0
-  if n == 1:
-    return 1
+Cherchons l'algorithme avec le moins d'étapes élémentaires
 
-  return fibonacci(n - 2) + fibonacci(n - 1)
+### Utiliser une boucle
 
-print(fibonacci(6)) # prints: 8
+```py
+i = 1
+v = 0
+for i in range(i, n):
+  v += v + 1
+
+print(v)
 ```
 
-## A few [code](https://www.wikipedia.org/) thingies
+Coût: `n * 2` opérations
 
-This is `a code thingy!!`
+### Utiliser les maths
+
+```py
+v = n + 1
+v *= b
+v /= 2
+```
+
+Coût: `3` opérations
