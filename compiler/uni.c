@@ -67,7 +67,7 @@ main(void)
   struct CMarkNode root = cmark_parse(ctx);
   FILE *file = stdout;
 
-  fprintf(file, "<!DOCTYPE html><head><link rel=\"stylesheet\" href=\"/static/app.css\"/><meta charset=\"utf-8\"/></head><body>");
+  fprintf(file, "<!DOCTYPE html><head><link rel=\"stylesheet\" href=\"/uni/static/app.css\"/><meta charset=\"utf-8\"/></head><body>");
   compile_node(root, file);
   fprintf(file, "</body>");
 
