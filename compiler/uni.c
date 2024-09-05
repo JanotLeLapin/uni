@@ -140,20 +140,20 @@ main(void)
   ctx.header_size = 8;
   ctx.headers = malloc(sizeof(struct Header) * 8);
 
-  fprintf(file, "<!DOCTYPE html><head><link rel=\"stylesheet\" href=\"/uni/static/app.css\"/><meta charset=\"utf-8\"/></head><body>");
+  fprintf(file, "<!DOCTYPE html><head><link rel=\"stylesheet\" href=\"file:///home/josephd/programs/uni/result/static/app.css\"/><meta charset=\"utf-8\"/></head><body>");
   compile_node(&ctx, root, file);
 
   cmark_free_node(root);
   free(cmark_context);
 
-  fprintf(file, "<nav><ul>");
+  fprintf(file, "<div class=\"contents\"><nav><ul>");
   for (i = 0; i < ctx.header_count; i++) {
     fprintf(file, "<li><a href=\"#%s\">%s</a></li>", ctx.headers[i].id, ctx.headers[i].text);
     free(ctx.headers[i].text);
     free(ctx.headers[i].id);
   }
   free(ctx.headers);
-  fprintf(file, "</nav></ul>");
+  fprintf(file, "</nav></ul></div>");
   fprintf(file, "</body>");
 
   return 0;
