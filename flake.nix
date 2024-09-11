@@ -1,6 +1,6 @@
 {
   inputs.nixpkgs.url = "github:NixOS/nixpkgs";
-  inputs.cmarkdown.url = "github:JanotLeLapin/cmarkdown";
+  inputs.cmarkdown.url = "github:JanotLeLapin/cmarkdown/pull";
   inputs.rust-overlay.url = "github:oxalica/rust-overlay";
 
   outputs = {

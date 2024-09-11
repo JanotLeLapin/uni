@@ -1,10 +1,13 @@
 #include <cmarkdown.h>
 #include <string.h>
-#include <stdlib.h>
 #include <stdio.h>
 
-#define COMPILE_CHILDREN() for (i = 0; i < node.children_count; i++) compile_node(ctx, node.children[i], stream);
-#define COMPILE_CHILDREN_STR() for (i = 0; i < node.children_count; i++) compile_node_str(node.children[i], buffer, buffer_length, buffer_end);
+enum Flag {
+  FLAG_PARAGRAPH = 1 << 1,
+  FLAG_ANCHOR = 1 << 2,
+  FLAG_INLINE_CODE = 1 << 3,
+  FLAG_MULTILINE_CODE = 1 << 4,
+};
 
 char *uni_highlight(const char *source, const char *lang);
 void uni_free_buffer(char *ptr);
@@ -13,12 +16,6 @@ struct Header {
   char level;
   char *text;
   char *id;
-};
-
-struct Context {
-  size_t header_count;
-  size_t header_size;
-  struct Header *headers;
 };
 
 void
@@ -43,118 +40,109 @@ kebab_case(char *dest, const char *src, size_t dest_length)
   dest[di] = '\0';
 }
 
-void
-compile_node_str(struct CMarkNode node, char *buffer, size_t buffer_length, size_t *buffer_end) {
-  size_t i;
-
-  switch (node.type) {
-    case CMARK_HEADER:
-    case CMARK_ANCHOR:
-      COMPILE_CHILDREN_STR();
-      break;
-    case CMARK_CODE:
-      strcat(buffer, node.data.code.content);
-      break;
-    case CMARK_PLAIN:
-      strcat(buffer, node.data.plain);
-      break;
-    case CMARK_WHITESPACE:
-      strcat(buffer, " ");
-      break;
-    default:
-      break;
-  }
-}
-
-void
-compile_node(struct Context *ctx, struct CMarkNode node, FILE *stream)
-{
-  size_t i, end;
-  struct Header header;
-
-  switch (node.type) {
-    case CMARK_ROOT:
-      fprintf(stream, "<main>");
-      COMPILE_CHILDREN();
-      fprintf(stream, "</main>");
-      break;
-    case CMARK_NULL:
-      break;
-    case CMARK_HEADER:
-      end = 0;
-      header.level = node.data.header.level;
-      header.text = malloc(128);
-      header.text[0] = '\0';
-      compile_node_str(node, header.text, 128, &end);
-      header.id = malloc(128);
-      header.id[0] = '\0';
-      kebab_case(header.id, header.text, 128);
-      ctx->headers[ctx->header_count] = header;
-      ctx->header_count++;
-
-      fprintf(stream, "<h%d id=\"%s\">", node.data.header.level, header.id);
-      COMPILE_CHILDREN();
-      fprintf(stream, "</h%d>", node.data.header.level);
-      break;
-    case CMARK_PARAGRAPH:
-      fprintf(stream, "<p>");
-      COMPILE_CHILDREN();
-      fprintf(stream, "</p>");
-      break;
-    case CMARK_ANCHOR:
-      fprintf(stream, "<a href=\"%s\">", node.data.anchor.href);
-      COMPILE_CHILDREN();
-      fprintf(stream, "</a>");
-      break;
-    case CMARK_CODE:
-      if (node.data.code.is_block) {
-        char *buffer = uni_highlight(node.data.code.content, node.data.code.lang);
-        fprintf(stream, "<pre><code>%s</pre></code>", buffer);
-        uni_free_buffer(buffer);
-      } else {
-        fprintf(stream, "<code>%s</code>", node.data.code.content);
-      }
-      break;
-    case CMARK_PLAIN:
-      fprintf(stream, "%s", node.data.plain);
-      break;
-    case CMARK_WHITESPACE:
-      fprintf(stream, " ");
-      break;
-    case CMARK_BREAK:
-      fprintf(stream, "</br>");
-      break;
-  }
-}
-
 int
 main(void)
 {
-  struct CMarkContext *cmark_context = cmark_create_context(stdin);
-  struct CMarkNode root = cmark_parse(cmark_context);
-  struct Context ctx;
-  FILE *file = stdout;
-  size_t i;
+  struct CMarkParser p = cmark_new_parser(stdin);
+  struct CMarkElem e;
+  unsigned short flags = 0;
+  size_t buf_end = 0;
+  char buf[1024];
+  size_t inline_buf_end = 0;
+  char inline_buf[1024];
+  char code_lang[16];
 
-  ctx.header_count = 0;
-  ctx.header_size = 8;
-  ctx.headers = malloc(sizeof(struct Header) * 8);
+  printf("<!DOCTYPE html><head><link rel=\"stylesheet\" href=\"/static/app.css\"/><meta charset=\"utf-8\"/></head><body>");
 
-  fprintf(file, "<!DOCTYPE html><head><link rel=\"stylesheet\" href=\"file:///home/josephd/programs/uni/result/static/app.css\"/><meta charset=\"utf-8\"/></head><body>");
-  compile_node(&ctx, root, file);
+  while (1) {
+    e = cmark_next(&p);
 
-  cmark_free_node(root);
-  free(cmark_context);
+    switch (e.type) {
+      case CMARK_HEADER:
+        flags |= (e.data.header_level & 0b111) << 8;
+        printf("<h%d>", e.data.header_level);
+        continue;
+      case CMARK_PLAIN:
+        if (!flags) {
+          flags |= FLAG_PARAGRAPH;
+          printf("<p>");
+        }
 
-  fprintf(file, "<div class=\"contents\"><nav><ul>");
-  for (i = 0; i < ctx.header_count; i++) {
-    fprintf(file, "<li><a href=\"#%s\">%s</a></li>", ctx.headers[i].id, ctx.headers[i].text);
-    free(ctx.headers[i].text);
-    free(ctx.headers[i].id);
+        char *where = (flags & FLAG_ANCHOR) ? (inline_buf + inline_buf_end) : (buf + buf_end);
+        size_t *end = (flags & FLAG_ANCHOR) ? &inline_buf_end : &buf_end;
+        snprintf(where, 1023 - (size_t) *end, "%.*s", (int) e.data.plain.length, e.data.plain.ptr);
+        *end += e.data.plain.length;
+        continue;
+      case CMARK_ANCHOR_START:
+        flags |= FLAG_ANCHOR;
+        continue;
+      case CMARK_ANCHOR_END:
+        flags &= ~FLAG_ANCHOR;
+        snprintf(buf + buf_end, 1023 - buf_end, "<a href=\"%.*s\">%.*s</a>", (int) e.data.anchor_end_href.length, e.data.anchor_end_href.ptr, (int) inline_buf_end, inline_buf);
+        buf_end += 15 + e.data.anchor_end_href.length + inline_buf_end;
+        inline_buf_end = 0;
+        continue;
+      case CMARK_CODE_START:
+        if (e.data.code.is_multi_line) {
+          flags |= FLAG_MULTILINE_CODE;
+
+          size_t len = strlen(e.data.code.lang);
+          memcpy(code_lang, e.data.code.lang, len);
+          code_lang[len] = '\0';
+
+          printf("<pre><code>");
+          buf_end = 0;
+        } else {
+          flags |= FLAG_INLINE_CODE;
+
+          snprintf(buf + buf_end, 1023 - buf_end, "<code>");
+          buf_end += 6;
+        }
+        continue;
+      case CMARK_CODE_END:
+        if (flags & FLAG_MULTILINE_CODE) {
+          flags &= ~FLAG_MULTILINE_CODE;
+          buf[buf_end] = '\0';
+          char *highlighted = uni_highlight(buf, code_lang);
+          printf("%s", highlighted);
+          uni_free_buffer(highlighted);
+          buf_end = 0;
+
+          printf("</code></pre>");
+        } else {
+          flags &= ~FLAG_INLINE_CODE;
+          snprintf(buf + buf_end, 1023 - buf_end, "</code>");
+          buf_end += 7;
+        }
+        continue;
+      case CMARK_BREAK:
+        if (flags & FLAG_MULTILINE_CODE) {
+          snprintf(buf + buf_end, 1023 - buf_end, "\n");
+          buf_end += 1;
+          continue;
+        }
+        
+        printf("%.*s", (int) buf_end, buf);
+        buf_end = 0;
+        if (flags & FLAG_PARAGRAPH) {
+          printf("</p>");
+        } else if (flags & (0b111 << 8)) {
+          printf("</h%d>", (flags >> 8) & 0b111);
+        }
+
+        flags = 0;
+        continue;
+      case CMARK_EOF:
+        break;
+      default:
+        continue;
+    }
+
+    break;
   }
-  free(ctx.headers);
-  fprintf(file, "</nav></ul></div>");
-  fprintf(file, "</body>");
+  
+
+  printf("</body>");
 
   return 0;
 }
