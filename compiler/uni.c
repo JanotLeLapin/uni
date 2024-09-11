@@ -62,7 +62,7 @@ main(void)
   char *ptr;
   size_t *end;
 
-  printf("<!DOCTYPE html><head><link rel=\"stylesheet\" href=\"/static/app.css\"/><meta charset=\"utf-8\"/></head><body>");
+  printf("<!DOCTYPE html><head><link rel=\"stylesheet\" href=\"/uni/static/app.css\"/><meta charset=\"utf-8\"/></head><body>");
 
   while (1) {
     e = cmark_next(&p);
@@ -172,7 +172,7 @@ main(void)
   
   printf("<nav id=\"contents\"><ul>");
   for (i = 0; i < header_count; i++) {
-    printf("<li><a href=\"%s\">%s</a></li>", headers[i].id, headers[i].text);
+    printf("<li><a href=\"#%s\">%s</a></li>", headers[i].id, headers[i].text);
   }
   free(headers);
 
