@@ -1,6 +1,7 @@
 #include <cmarkdown.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 enum Flag {
   FLAG_PARAGRAPH = 1 << 1,
@@ -14,8 +15,9 @@ void uni_free_buffer(char *ptr);
 
 struct Header {
   char level;
-  char *text;
-  char *id;
+  size_t text_end;
+  char text[128];
+  char id[128];
 };
 
 void
@@ -45,12 +47,17 @@ main(void)
 {
   struct CMarkParser p = cmark_new_parser(stdin);
   struct CMarkElem e;
+  size_t header_count = 0;
+  size_t header_size = 8;
+  struct Header *headers = malloc(sizeof(struct Header) * header_size);
+  struct Header header;
   unsigned short flags = 0;
   size_t buf_end = 0;
   char buf[1024];
   size_t inline_buf_end = 0;
   char inline_buf[1024];
   char code_lang[16];
+  size_t i;
 
   printf("<!DOCTYPE html><head><link rel=\"stylesheet\" href=\"/static/app.css\"/><meta charset=\"utf-8\"/></head><body>");
 
@@ -60,12 +67,21 @@ main(void)
     switch (e.type) {
       case CMARK_HEADER:
         flags |= (e.data.header_level & 0b111) << 8;
+        header.level = e.data.header_level;
+        header.text_end = 0;
+        header.text[0] = '\0';
+        header.id[0] = '\0';
         printf("<h%d>", e.data.header_level);
         continue;
       case CMARK_PLAIN:
         if (!flags) {
           flags |= FLAG_PARAGRAPH;
           printf("<p>");
+        }
+
+        if (flags & (0b111 << 8)) {
+          memcpy(header.text + header.text_end, e.data.plain.ptr, e.data.plain.length);
+          header.text_end += e.data.plain.length;
         }
 
         char *where = (flags & FLAG_ANCHOR) ? (inline_buf + inline_buf_end) : (buf + buf_end);
@@ -127,6 +143,15 @@ main(void)
         if (flags & FLAG_PARAGRAPH) {
           printf("</p>");
         } else if (flags & (0b111 << 8)) {
+          header.text[header.text_end] = '\0';
+          kebab_case(header.id, header.text, 128);
+          if (header_count >= header_size) {
+            header_size *= 2;
+            headers = realloc(headers, sizeof(struct Header) * header_size);
+          }
+          headers[header_count] = header;
+          header_count++;
+
           printf("</h%d>", (flags >> 8) & 0b111);
         }
 
@@ -141,7 +166,13 @@ main(void)
     break;
   }
   
+  printf("<nav id=\"contents\"><ul>");
+  for (i = 0; i < header_count; i++) {
+    printf("<li><a href=\"%s\">%s</a></li>", headers[i].id, headers[i].text);
+  }
+  free(headers);
 
+  printf("</ul></nav>");
   printf("</body>");
 
   return 0;
