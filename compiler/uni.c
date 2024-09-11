@@ -59,10 +59,16 @@ main(void)
   char code_lang[16];
   size_t i;
 
+  char *ptr;
+  size_t *end;
+
   printf("<!DOCTYPE html><head><link rel=\"stylesheet\" href=\"/static/app.css\"/><meta charset=\"utf-8\"/></head><body>");
 
   while (1) {
     e = cmark_next(&p);
+
+    ptr = (flags & FLAG_ANCHOR) ? (inline_buf + inline_buf_end) : (buf + buf_end);
+    end = (flags & FLAG_ANCHOR) ? &inline_buf_end : &buf_end;
 
     switch (e.type) {
       case CMARK_HEADER:
@@ -84,9 +90,7 @@ main(void)
           header.text_end += e.data.plain.length;
         }
 
-        char *where = (flags & FLAG_ANCHOR) ? (inline_buf + inline_buf_end) : (buf + buf_end);
-        size_t *end = (flags & FLAG_ANCHOR) ? &inline_buf_end : &buf_end;
-        snprintf(where, 1023 - (size_t) *end, "%.*s", (int) e.data.plain.length, e.data.plain.ptr);
+        snprintf(ptr, 1023 - *end, "%.*s", (int) e.data.plain.length, e.data.plain.ptr);
         *end += e.data.plain.length;
         continue;
       case CMARK_ANCHOR_START:
@@ -111,8 +115,8 @@ main(void)
         } else {
           flags |= FLAG_INLINE_CODE;
 
-          snprintf(buf + buf_end, 1023 - buf_end, "<code>");
-          buf_end += 6;
+          snprintf(ptr, 1023 - *end, "<code>");
+          *end += 6;
         }
         continue;
       case CMARK_CODE_END:
@@ -127,8 +131,8 @@ main(void)
           printf("</code></pre>");
         } else {
           flags &= ~FLAG_INLINE_CODE;
-          snprintf(buf + buf_end, 1023 - buf_end, "</code>");
-          buf_end += 7;
+          snprintf(ptr, 1023 - *end, "</code>");
+          *end += 7;
         }
         continue;
       case CMARK_BREAK:
