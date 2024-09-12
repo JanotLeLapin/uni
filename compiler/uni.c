@@ -202,7 +202,7 @@ main(void)
     break;
   }
   
-  printf("</main><nav id=\"contents\"><ul>");
+  printf("</main><nav id=\"contents\"><h3>Contenu</h3><ul>");
   for (i = 0; i < header_count; i++) {
     printf("<li><a href=\"#%s\">%s</a></li>", headers[i].id, headers[i].text);
   }
