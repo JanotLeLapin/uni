@@ -69,15 +69,13 @@ main(void)
 
   printf("<!DOCTYPE html><html><head><link rel=\"stylesheet\" href=\"/uni/static/app.css\"/><meta charset=\"utf-8\"/></head><body><main>");
 
-  while (1) {
+  do {
     e = cmark_next(&p);
 
     if (is_newline && is_list && CMARK_LIST_ITEM != e.type) {
       printf("</ul>");
       is_list = 0;
     }
-
-    is_newline = e.type == CMARK_BREAK;
 
     if (flags & FLAG_ANCHOR) {
       ptr = anchor_buf + anchor_buf_end;
@@ -104,20 +102,20 @@ main(void)
         header.text_end = 0;
         header.text[0] = '\0';
         header.id[0] = '\0';
-        continue;
+        break;
       case CMARK_LIST_ITEM:
         if (!is_list) {
           printf("<ul>");
         }
         printf("<li>");
         is_list = 1;
-        continue;
+        break;
       case CMARK_BLOCKQUOTE_START:
         printf("<blockquote>");
-        continue;
+        break;
       case CMARK_BLOCKQUOTE_END:
         printf("</blockquote>");
-        continue;
+        break;
       case CMARK_PLAIN:
         if (!flags) {
           flags |= FLAG_PARAGRAPH;
@@ -131,10 +129,10 @@ main(void)
 
         snprintf(ptr, size - *end, "%.*s", (int) e.data.plain.length, e.data.plain.ptr);
         *end += e.data.plain.length;
-        continue;
+        break;
       case CMARK_ANCHOR_START:
         flags |= FLAG_ANCHOR;
-        continue;
+        break;
       case CMARK_ANCHOR_END:
         flags &= ~FLAG_ANCHOR;
         if (flags & (0b111 << 8)) {
@@ -149,7 +147,7 @@ main(void)
         snprintf(ptr, size - *end, "<a href=\"%.*s\">%.*s</a>", (int) e.data.anchor_end_href.length, e.data.anchor_end_href.ptr, (int) anchor_buf_end, anchor_buf);
         *end += 15 + e.data.anchor_end_href.length + anchor_buf_end;
         anchor_buf_end = 0;
-        continue;
+        break;
       case CMARK_CODE_START:
         if (e.data.code.is_multi_line) {
           flags |= FLAG_MULTILINE_CODE;
@@ -165,7 +163,7 @@ main(void)
           snprintf(ptr, size - *end, "<code>");
           *end += 6;
         }
-        continue;
+        break;
       case CMARK_CODE_END:
         if (flags & FLAG_MULTILINE_CODE) {
           flags &= ~FLAG_MULTILINE_CODE;
@@ -181,12 +179,12 @@ main(void)
           snprintf(ptr, size - *end, "</code>");
           *end += 7;
         }
-        continue;
+        break;
       case CMARK_BREAK:
         if (flags & FLAG_MULTILINE_CODE) {
           snprintf(code_buf + code_buf_end, size - code_buf_end, "\n");
           code_buf_end += 1;
-          continue;
+          break;
         }
         
         printf("%.*s", (int) res_buf_end, res_buf);
@@ -212,16 +210,14 @@ main(void)
         }
 
         flags = 0;
-        continue;
-      case CMARK_EOF:
         break;
       default:
-        continue;
+        break;
     }
 
-    break;
-  }
-  
+    is_newline = e.type == CMARK_BREAK;
+  } while (e.type != CMARK_EOF);
+
   printf("</main><nav id=\"contents\"><h3>Contenu</h3><ul>");
   for (i = 0; i < header_count; i++) {
     printf("<li><a href=\"#%s\">%s</a></li>", headers[i].id, headers[i].text);
