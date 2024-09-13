@@ -57,7 +57,6 @@ main(void)
   struct Header *headers = malloc(sizeof(struct Header) * header_size);
   struct Header header;
   unsigned short flags = 0;
-  char is_newline = 1;
   char is_list = 0;
   size_t res_buf_end = 0, header_buf_end = 0, anchor_buf_end = 0, code_buf_end = 0;
   char res_buf[RES_BUF_SIZE], header_buf[HEADER_BUF_SIZE], anchor_buf[ANCHOR_BUF_SIZE], code_buf[CODE_BUF_SIZE];
@@ -71,11 +70,6 @@ main(void)
 
   do {
     e = cmark_next(&p);
-
-    if (is_newline && is_list && CMARK_LIST_ITEM != e.type) {
-      printf("</ul>");
-      is_list = 0;
-    }
 
     if (flags & FLAG_ANCHOR) {
       ptr = anchor_buf + anchor_buf_end;
@@ -103,12 +97,16 @@ main(void)
         header.text[0] = '\0';
         header.id[0] = '\0';
         break;
-      case CMARK_LIST_ITEM:
-        if (!is_list) {
-          printf("<ul>");
-        }
-        printf("<li>");
+      case CMARK_LIST_START:
+        printf("<ul>");
         is_list = 1;
+        break;
+      case CMARK_LIST_ITEM:
+        printf("<li>");
+        break;
+      case CMARK_LIST_END:
+        printf("</ul>");
+        is_list = 0;
         break;
       case CMARK_BLOCKQUOTE_START:
         printf("<blockquote>");
@@ -214,8 +212,6 @@ main(void)
       default:
         break;
     }
-
-    is_newline = e.type == CMARK_BREAK;
   } while (e.type != CMARK_EOF);
 
   printf("</main><nav id=\"contents\"><h3>Contenu</h3><ul>");
