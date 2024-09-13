@@ -128,6 +128,26 @@ main(void)
         snprintf(ptr, size - *end, "%.*s", (int) e.data.plain.length, e.data.plain.ptr);
         *end += e.data.plain.length;
         break;
+      case CMARK_EMPHASIS_START:
+        if (e.data.emphasis_flags & 0x01) {
+          snprintf(ptr, size - *end, "<em>");
+          *end += 4;
+        }
+        if (e.data.emphasis_flags & 0x02) {
+          snprintf(ptr, size - *end, "<strong>");
+          *end += 8;
+        }
+        break;
+      case CMARK_EMPHASIS_END:
+        if (e.data.emphasis_flags & 0x02) {
+          snprintf(ptr, size - *end, "</strong>");
+          *end += 9;
+        }
+        if (e.data.emphasis_flags & 0x01) {
+          snprintf(ptr, size - *end, "</em>");
+          *end += 5;
+        }
+        break;
       case CMARK_ANCHOR_START:
         flags |= FLAG_ANCHOR;
         break;

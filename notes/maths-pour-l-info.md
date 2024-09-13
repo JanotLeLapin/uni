@@ -10,7 +10,7 @@ Dans le système numérique arabe, on attribue des symboles arbitraires à des c
 
 ### Nombres entiers
 
-Ce système numérique est dit positionnel, i.e. la position du chiffre dans le nombre a une signification par rapport à sa valeur. Exemple:
+Ce système numérique est dit **positionnel**, i.e. la position du chiffre dans le nombre a une signification par rapport à sa valeur. Exemple:
 
 - `1234` = `1 * 1000` + `2 * 100` + `3 * 10` + `4 * 1`
 - `47` = `4 * 10` = `7 * 1`
