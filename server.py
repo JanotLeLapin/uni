@@ -10,6 +10,27 @@ class ShellCommandHandler(BaseHTTPRequestHandler):
         path = self.path[1:]
 
         try:
+            match path:
+                case "uni/static/app.css":
+                    file = os.path.join(os.getcwd(), "notes", "app.scss")
+                    if not os.path.exists(file):
+                        self.send_response(404)
+                        self.end_headers()
+                        return
+
+                    process = subprocess.Popen(
+                        ["grass", file],
+                        stdout=subprocess.PIPE,
+                        stdin=subprocess.PIPE,
+                    )
+                    stdout, stderr = process.communicate()
+
+                    self.send_response(200)
+                    self.end_headers()
+                    self.wfile.write(stdout)
+
+                    return
+
             file = os.path.join(os.getcwd(), "notes", f"{path}.md")
 
             if not os.path.exists(file):
@@ -17,11 +38,9 @@ class ShellCommandHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 return
 
-            command = ['./result/bin/uni-compiler']
-
             with open(file, "r") as f:
                 process = subprocess.Popen(
-                    command,
+                    ["./result/bin/uni-compiler"],
                     stdin=f,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
