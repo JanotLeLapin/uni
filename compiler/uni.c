@@ -97,6 +97,21 @@ main(void)
         header.text[0] = '\0';
         header.id[0] = '\0';
         break;
+      case CMARK_ASIDE_START:
+        printf("<aside class=\"%.*s\">", (int) e.data.aside.type.length, e.data.aside.type.ptr);
+        if (e.data.aside.title.length > 0) {
+          printf("<h3>%.*s</h3>", (int) e.data.aside.title.length, e.data.aside.title.ptr);
+        } else if (!strncmp("note", e.data.aside.type.ptr, 4)) {
+          printf("<h3>Note</h3>");
+        } else if (!strncmp("warning", e.data.aside.type.ptr, 7)) {
+          printf("<h3>Attention</h3>");
+        } else if (!strncmp("tip", e.data.aside.type.ptr, 3)) {
+          printf("<h3>Conseil</h3>");
+        }
+        break;
+      case CMARK_ASIDE_END:
+        printf("</aside>");
+        break;
       case CMARK_LIST_START:
         printf("<ul>");
         is_list = 1;

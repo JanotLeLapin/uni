@@ -73,6 +73,24 @@ blockquote {
   margin: 1rem 0;
 }
 
+@mixin aside($bg, $border) {
+  border-left: solid 8px $border;
+  background: $bg;
+}
+
+aside {
+  border-radius: 8px;
+  padding: .5rem 1rem;
+
+  h3 {
+    margin: 16px;
+  }
+
+  &.note { @include aside(#dbeafe, #60a5fa); }
+  &.warning { @include aside(#ffedd5, #fb923c); }
+  &.tip { @include aside(#fae8ff, #e879f9); }
+}
+
 pre {
   color: $color-fg-1;
   background: $color-bg-1;
