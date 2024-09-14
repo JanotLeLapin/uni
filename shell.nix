@@ -6,6 +6,7 @@
 , rust-analyzer
 , valgrind
 , grass-sass
+, python3
 , mkShell
 }: mkShell {
   buildInputs = [
@@ -13,5 +14,6 @@
     libcmarkdown tree-sitter
     clang-tools rust-analyzer valgrind
     grass-sass
+    (python3.withPackages (pkgs: [ pkgs.python-lsp-server ]))
   ];
 }
