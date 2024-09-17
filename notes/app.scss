@@ -18,6 +18,8 @@ $color-blue: #3b82f6;
 $color-purple: #8b5cf6;
 $color-rose: #d946ef;
 
+$font-size: 12px;
+
 body {
   color: $color-fg-2;
   background: $color-bg-2;
@@ -92,10 +94,20 @@ aside {
 }
 
 pre {
-  color: $color-fg-1;
   background: $color-bg-1;
   padding: .5rem;
   border-radius: 8px;
+}
+
+code {
+  color: $color-fg-1;
+  font-size: 1rem;
+}
+
+code:not(pre code) {
+  background: $color-bg-1;
+  padding: 0.1rem .2rem;
+  border-radius: 4px;
 }
 
 code span {
