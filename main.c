@@ -141,6 +141,29 @@ compile_heading(ctx_t *ctx, dyn_str_t *dst)
 }
 
 static inline int
+compile_list(ctx_t *ctx, dyn_str_t *dst)
+{
+  dyn_str_append(dst, "<ul>", 4);
+
+  cmark_next(&ctx->cmark);
+  while (CMARK_ELEM_LIST_END != ctx->current.type) {
+    dyn_str_append(dst, "<li>", 4);
+    do {
+      ctx->current = cmark_next(&ctx->cmark);
+      if (CMARK_ELEM_LIST_END == ctx->current.type) {
+        break;
+      }
+      compile_inline(ctx, dst);
+    } while (CMARK_ELEM_LIST_ITEM != ctx->current.type);
+    dyn_str_append(dst, "</li>", 5);
+  }
+
+  dyn_str_append(dst, "</ul>", 5);
+
+  return 0;
+}
+
+static inline int
 compile_paragraph(ctx_t *ctx, dyn_str_t *dst)
 {
   dyn_str_append(dst, "<p>", 3);
@@ -188,6 +211,9 @@ main(int argc, char **argv)
     switch (ctx.current.type) {
     case CMARK_ELEM_HEADING:
       compile_heading(&ctx, &ctx.str);
+      break;
+    case CMARK_ELEM_LIST_START:
+      compile_list(&ctx, &ctx.str);
       break;
     default:
       compile_paragraph(&ctx, &ctx.str);
