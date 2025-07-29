@@ -13,6 +13,11 @@
         overlays = [(self: super: {
           cmarkdown = cmarkdown.packages."${system}".musl;
           tree-sitter = self.pkgsMusl.callPackage ./tree-sitter.nix {};
+          tree-sitter-json = import ./grammar.nix {
+            lang = "json";
+            version = "0.24.8";
+            rev = "ee35a6ebefcef0c5c416c0d1ccec7370cfca5a24";
+          } self.pkgsMusl;
         })];
       });
     }));
