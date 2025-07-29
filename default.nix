@@ -1,6 +1,7 @@
 { cmarkdown
 , tree-sitter
 , tree-sitter-json
+, tree-sitter-python
 , stdenv
 }: stdenv.mkDerivation {
   pname = "uni";
@@ -14,7 +15,12 @@
       -I${cmarkdown}/include -L${cmarkdown}/lib \
       -I${tree-sitter}/include -L${tree-sitter}/lib \
       -I${tree-sitter-json}/include -L${tree-sitter-json}/lib \
-      main.c -lcmarkdown -ltree-sitter -ltree-sitter-json -o main
+      -I${tree-sitter-python}/include -L${tree-sitter-python}/lib \
+      main.c highlight.c \
+      -lcmarkdown -ltree-sitter \
+      -ltree-sitter-json \
+      -ltree-sitter-python \
+      -o main
   '';
   installPhase = ''
     mkdir -p $out/bin

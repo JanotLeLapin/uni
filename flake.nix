@@ -18,6 +18,11 @@
             version = "0.24.8";
             rev = "ee35a6ebefcef0c5c416c0d1ccec7370cfca5a24";
           } self.pkgsMusl;
+          tree-sitter-python = import ./grammar.nix {
+            lang = "python";
+            version = "0.23.6";
+            rev = "bffb65a8cfe4e46290331dfef0dbf0ef3679de11";
+          } self.pkgsMusl;
         })];
       });
     }));
