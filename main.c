@@ -1,4 +1,5 @@
 #include "uni.h"
+#include "highlight.h"
 
 #include <fcntl.h>
 #include <stdio.h>
@@ -131,6 +132,8 @@ compile_code_multiline(ctx_t *ctx, dyn_str_t *dst)
   dyn_str_append(dst, "\">", 2);
   dyn_str_append(dst, ctx->current.code_multiline.content.p, ctx->current.code_multiline.content.len);
   dyn_str_append(dst, "</pre>", 6);
+
+  highlight(ctx->current.code_multiline.content);
 
   return 0;
 }
