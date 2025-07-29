@@ -2,11 +2,21 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <cmarkdown.h>
+
 typedef struct {
   char *p;
   size_t len;
   size_t capacity;
 } dyn_str_t;
+
+typedef struct {
+  cmark_ctx_t cmark;
+  dyn_str_t str;
+  cmark_elem_t current;
+} ctx_t;
+
+static int compile_inline(ctx_t *ctx, dyn_str_t *dst);
 
 static inline int
 dyn_str_init(dyn_str_t *s, size_t initial_cap)
@@ -56,17 +66,122 @@ dyn_str_free(dyn_str_t *s)
   s->capacity = 0;
 }
 
+static inline int
+compile_plain(ctx_t *ctx, dyn_str_t *dst)
+{
+  dyn_str_append(dst, ctx->current.plain.p, ctx->current.plain.len);
+  return 0;
+}
+
+static inline int
+compile_anchor(ctx_t *ctx, dyn_str_t *dst)
+{
+  dyn_str_t content;
+
+  if (-1 == dyn_str_init(&content, 16)) {
+    return -1;
+  }
+
+  while (CMARK_ELEM_ANCHOR_LINK != ctx->current.type) {
+    if (CMARK_ELEM_EOF == ctx->current.type) {
+      return 0;
+    }
+    fprintf(stdout, "%d\n", ctx->current.type);
+    ctx->current = cmark_next(&ctx->cmark);
+    compile_inline(ctx, &content);
+  }
+
+  fprintf(stdout, "processing anchor\n");
+
+  dyn_str_append(dst, "<a href=\"", 9);
+  dyn_str_append(dst, ctx->current.anchor_link.p, ctx->current.anchor_link.len);
+  dyn_str_append(dst, "\">", 2);
+  dyn_str_append(dst, content.p, content.len);
+  dyn_str_append(dst, "</a>", 4);
+
+  dyn_str_free(&content);
+
+  return 0;
+}
+
+static int
+compile_inline(ctx_t *ctx, dyn_str_t *dst)
+{
+  switch (ctx->current.type) {
+  case CMARK_ELEM_PLAIN:
+    return compile_plain(ctx, dst);
+  case CMARK_ELEM_ANCHOR_TEXT:
+    return compile_anchor(ctx, dst);
+  default:
+    return -1;
+  }
+}
+
+static inline int
+compile_heading(ctx_t *ctx, dyn_str_t *dst)
+{
+  char tag[3];
+  tag[0] = 'h';
+  tag[1] = ctx->current.heading + '0';
+  tag[2] = '>';
+
+  dyn_str_append(dst, "<", 1);
+  dyn_str_append(dst, tag, 3);
+
+  while (CMARK_ELEM_BREAK != ctx->current.type && CMARK_ELEM_EOF != ctx->current.type) {
+    ctx->current = cmark_next(&ctx->cmark);
+    compile_inline(ctx, dst);
+  }
+
+  dyn_str_append(dst, "</", 2);
+  dyn_str_append(dst, tag, 3);
+
+  return 0;
+}
+
+static inline int
+compile_paragraph(ctx_t *ctx, dyn_str_t *dst)
+{
+  dyn_str_append(dst, "<p>", 3);
+
+  compile_inline(ctx, dst);
+  while (CMARK_ELEM_BREAK != ctx->current.type && CMARK_ELEM_EOF != ctx->current.type) {
+    ctx->current = cmark_next(&ctx->cmark);
+    compile_inline(ctx, dst);
+  }
+
+  dyn_str_append(dst, "</p>", 4);
+
+  return 0;
+}
+
 int
 main()
 {
-  dyn_str_t str;
+  ctx_t ctx;
+  const char *src = "# Hello world\n\nWelcome to my website\n";
+  size_t len = strlen(src);
 
-  dyn_str_init(&str, 2);
-  dyn_str_append(&str, "hello", 5);
-  dyn_str_append(&str, " ", 1);
-  dyn_str_append(&str, "world", 5);
+  cmark_init_ctx(&ctx.cmark, src, len);
+  if (-1 == dyn_str_init(&ctx.str, 512)) {
+    perror("dyn_str_init");
+    return -1;
+  };
 
-  fprintf(stderr, "%.*s\n", (int) str.len, str.p);
+  do {
+    ctx.current = cmark_next(&ctx.cmark);
+    fprintf(stderr, "got %d\n", ctx.current.type);
+    switch (ctx.current.type) {
+    case CMARK_ELEM_HEADING:
+      compile_heading(&ctx, &ctx.str);
+      break;
+    default:
+      compile_paragraph(&ctx, &ctx.str);
+      break;
+    }
+  } while (CMARK_ELEM_EOF != ctx.current.type);
 
-  dyn_str_free(&str);
+  fprintf(stdout, "%.*s\n", (int) ctx.str.len, ctx.str.p);
+
+  dyn_str_free(&ctx.str);
 }
