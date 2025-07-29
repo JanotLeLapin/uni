@@ -8,7 +8,7 @@
   src = ./.;
 
   buildPhase = ''
-    $CC -lcmarkdown main.c -o main
+    $CC -Wall -Wextra -O3 -lcmarkdown main.c -o main
   '';
   installPhase = ''
     mkdir -p $out/bin
