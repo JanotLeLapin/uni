@@ -90,12 +90,9 @@ compile_anchor(ctx_t *ctx, dyn_str_t *dst)
     if (CMARK_ELEM_EOF == ctx->current.type) {
       return 0;
     }
-    fprintf(stdout, "%d\n", ctx->current.type);
     ctx->current = cmark_next(&ctx->cmark);
     compile_inline(ctx, &content);
   }
-
-  fprintf(stdout, "processing anchor\n");
 
   dyn_str_append(dst, "<a href=\"", 9);
   dyn_str_append(dst, ctx->current.anchor_link.p, ctx->current.anchor_link.len);
