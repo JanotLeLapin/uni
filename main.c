@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <unistd.h>
 #include <sys/mman.h>
 
@@ -165,6 +166,7 @@ main()
   int fd = STDIN_FILENO;
   char *src;
   size_t len;
+  clock_t start, end;
 
   len = lseek(fd, 0, SEEK_END);
   src = mmap(0, len, PROT_READ, MAP_PRIVATE, fd, 0);
@@ -175,6 +177,7 @@ main()
     return -1;
   };
 
+  start = clock();
   do {
     ctx.current = cmark_next(&ctx.cmark);
     fprintf(stderr, "got %d\n", ctx.current.type);
@@ -187,8 +190,10 @@ main()
       break;
     }
   } while (CMARK_ELEM_EOF != ctx.current.type);
+  end = clock();
 
   fprintf(stdout, "%.*s\n", (int) ctx.str.len, ctx.str.p);
+  fprintf(stderr, "took %fs\n", ((double) (end - start)) / CLOCKS_PER_SEC);
 
   dyn_str_free(&ctx.str);
 
