@@ -12,6 +12,7 @@
         inherit system;
         overlays = [(self: super: {
           cmarkdown = cmarkdown.packages."${system}".musl;
+          tree-sitter = self.pkgsMusl.callPackage ./tree-sitter.nix {};
         })];
       });
     }));

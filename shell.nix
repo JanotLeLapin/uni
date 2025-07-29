@@ -1,7 +1,8 @@
 { clang-tools
 , cmarkdown
+, tree-sitter
 , valgrind
 , mkShell
 }: mkShell {
-  buildInputs = [ clang-tools cmarkdown valgrind ];
+  buildInputs = [ clang-tools cmarkdown tree-sitter valgrind ];
 }
