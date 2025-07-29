@@ -157,13 +157,20 @@ compile_paragraph(ctx_t *ctx, dyn_str_t *dst)
 }
 
 int
-main()
+main(int argc, char **argv)
 {
   ctx_t ctx;
-  int fd = STDIN_FILENO;
+  int fd;
   char *src;
   size_t len;
   clock_t start, end;
+
+  if (argc < 2) {
+    fprintf(stderr, "missing input file\n");
+    return -1;
+  }
+
+  fd = open(argv[1], O_RDONLY);
 
   len = lseek(fd, 0, SEEK_END);
   src = mmap(0, len, PROT_READ, MAP_PRIVATE, fd, 0);
@@ -195,4 +202,6 @@ main()
   dyn_str_free(&ctx.str);
 
   munmap(src, len);
+
+  close(fd);
 }
