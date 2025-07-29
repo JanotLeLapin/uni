@@ -1,0 +1,61 @@
+{
+  "nodes": {
+    "cmarkdown": {
+      "inputs": {
+        "nixpkgs": "nixpkgs"
+      },
+      "locked": {
+        "lastModified": 1753785722,
+        "narHash": "sha256-pNIKDxAf+yVRpWO4RFjwd1klivLXWfKmTNs/iXfwqFM=",
+        "owner": "JanotLeLapin",
+        "repo": "cmarkdown",
+        "rev": "ebf8b080a4b26fe02816eb6d10de0877a34d1f42",
+        "type": "github"
+      },
+      "original": {
+        "owner": "JanotLeLapin",
+        "ref": "new",
+        "repo": "cmarkdown",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1753473560,
+        "narHash": "sha256-bT4abIU3eGDraRATwkdeJAeIvxt9e23dhpjjp2dsRqg=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "a6b41ef5e0c274f96b1f1b52b3d382302763f62a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_2": {
+      "locked": {
+        "lastModified": 1753788921,
+        "narHash": "sha256-1KUeJJNtwTdAFjHA155c1EZFaBj9YcZsHD1dk0GhAVI=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "203f630a877714e825ec1cf97d42c9531510df48",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "cmarkdown": "cmarkdown",
+        "nixpkgs": "nixpkgs_2"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
