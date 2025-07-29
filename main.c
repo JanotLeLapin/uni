@@ -115,18 +115,6 @@ compile_code_inline(ctx_t *ctx, dyn_str_t *dst)
   return 0;
 }
 
-static inline int
-compile_code_multiline(ctx_t *ctx, dyn_str_t *dst)
-{
-  dyn_str_append(dst, "<pre class=\"code-", 17);
-  dyn_str_append(dst, ctx->current.code_multiline.lang.p, ctx->current.code_multiline.lang.len);
-  dyn_str_append(dst, "\">", 2);
-  dyn_str_append(dst, ctx->current.code_multiline.content.p, ctx->current.code_multiline.content.len);
-  dyn_str_append(dst, "</pre>", 6);
-
-  return 0;
-}
-
 static int
 compile_inline(ctx_t *ctx, dyn_str_t *dst)
 {
@@ -137,8 +125,6 @@ compile_inline(ctx_t *ctx, dyn_str_t *dst)
     return compile_anchor(ctx, dst);
   case CMARK_ELEM_CODE_INLINE:
     return compile_code_inline(ctx, dst);
-  case CMARK_ELEM_CODE_MULTILINE:
-    return compile_code_multiline(ctx, dst);
   default:
     return -1;
   }
@@ -185,6 +171,18 @@ compile_list(ctx_t *ctx, dyn_str_t *dst)
   }
 
   dyn_str_append(dst, "</ul>", 5);
+
+  return 0;
+}
+
+static inline int
+compile_code_multiline(ctx_t *ctx, dyn_str_t *dst)
+{
+  dyn_str_append(dst, "<pre class=\"code-", 17);
+  dyn_str_append(dst, ctx->current.code_multiline.lang.p, ctx->current.code_multiline.lang.len);
+  dyn_str_append(dst, "\">", 2);
+  dyn_str_append(dst, ctx->current.code_multiline.content.p, ctx->current.code_multiline.content.len);
+  dyn_str_append(dst, "</pre>", 6);
 
   return 0;
 }
@@ -240,6 +238,11 @@ main(int argc, char **argv)
       break;
     case CMARK_ELEM_LIST_START:
       compile_list(&ctx, &ctx.str);
+      break;
+    case CMARK_ELEM_CODE_MULTILINE:
+      compile_code_multiline(&ctx, &ctx.str);
+      break;
+    case CMARK_ELEM_EOF:
       break;
     default:
       compile_paragraph(&ctx, &ctx.str);
