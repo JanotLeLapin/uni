@@ -105,6 +105,28 @@ compile_anchor(ctx_t *ctx, dyn_str_t *dst)
   return 0;
 }
 
+static inline int
+compile_code_inline(ctx_t *ctx, dyn_str_t *dst)
+{
+  dyn_str_append(dst, "<code>", 6);
+  dyn_str_append(dst, ctx->current.code_inline.p, ctx->current.code_inline.len);
+  dyn_str_append(dst, "</code>", 7);
+
+  return 0;
+}
+
+static inline int
+compile_code_multiline(ctx_t *ctx, dyn_str_t *dst)
+{
+  dyn_str_append(dst, "<pre class=\"code-", 17);
+  dyn_str_append(dst, ctx->current.code_multiline.lang.p, ctx->current.code_multiline.lang.len);
+  dyn_str_append(dst, "\">", 2);
+  dyn_str_append(dst, ctx->current.code_multiline.content.p, ctx->current.code_multiline.content.len);
+  dyn_str_append(dst, "</pre>", 6);
+
+  return 0;
+}
+
 static int
 compile_inline(ctx_t *ctx, dyn_str_t *dst)
 {
@@ -113,6 +135,10 @@ compile_inline(ctx_t *ctx, dyn_str_t *dst)
     return compile_plain(ctx, dst);
   case CMARK_ELEM_ANCHOR_TEXT:
     return compile_anchor(ctx, dst);
+  case CMARK_ELEM_CODE_INLINE:
+    return compile_code_inline(ctx, dst);
+  case CMARK_ELEM_CODE_MULTILINE:
+    return compile_code_multiline(ctx, dst);
   default:
     return -1;
   }
