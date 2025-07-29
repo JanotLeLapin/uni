@@ -1,6 +1,9 @@
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <sys/mman.h>
 
 #include <cmarkdown.h>
 
@@ -159,8 +162,12 @@ int
 main()
 {
   ctx_t ctx;
-  const char *src = "# Hello world\n\nWelcome to my website\n";
-  size_t len = strlen(src);
+  int fd = STDIN_FILENO;
+  char *src;
+  size_t len;
+
+  len = lseek(fd, 0, SEEK_END);
+  src = mmap(0, len, PROT_READ, MAP_PRIVATE, fd, 0);
 
   cmark_init_ctx(&ctx.cmark, src, len);
   if (-1 == dyn_str_init(&ctx.str, 512)) {
@@ -184,4 +191,6 @@ main()
   fprintf(stdout, "%.*s\n", (int) ctx.str.len, ctx.str.p);
 
   dyn_str_free(&ctx.str);
+
+  munmap(src, len);
 }
