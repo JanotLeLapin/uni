@@ -1,7 +1,9 @@
 #include "uni.h"
 #include "highlight.h"
 
+#ifdef ENABLE_TREE_SITTER
 #include "style/code.h"
+#endif
 
 #include <fcntl.h>
 #include <stdio.h>
@@ -18,6 +20,30 @@ typedef struct {
   dyn_str_t str;
   cmark_elem_t current;
 } ctx_t;
+
+static inline void
+embed_stylesheet(dyn_str_t *dst, const char *stylesheet, size_t stylesheet_len)
+{
+  DYN_STR_APPEND_PLAIN(dst, "<style>");
+  dyn_str_append(dst, stylesheet, stylesheet_len);
+  DYN_STR_APPEND_PLAIN(dst, "</style>");
+}
+
+#ifdef ENABLE_TREE_SITTER
+
+static inline void
+embed_code_stylesheet(dyn_str_t *dst)
+{
+  embed_stylesheet(dst, style_code, style_code_len);
+}
+
+#else
+
+static inline void
+embed_code_stylesheet(dyn_str_t *dst)
+{}
+
+#endif
 
 static int compile_inline(ctx_t *ctx, dyn_str_t *dst);
 
@@ -179,9 +205,9 @@ main(int argc, char **argv)
     return -1;
   };
 
-  DYN_STR_APPEND_PLAIN(&ctx.str, "<!DOCTYPE html><html><head><title>Hello, World!</title><style>");
-  dyn_str_append(&ctx.str, (char *) style_code, style_code_len);
-  DYN_STR_APPEND_PLAIN(&ctx.str, "</style></head><body>");
+  DYN_STR_APPEND_PLAIN(&ctx.str, "<!DOCTYPE html><html><head><title>Hello, World!</title>");
+  embed_code_stylesheet(&ctx.str);
+  DYN_STR_APPEND_PLAIN(&ctx.str, "</head><body>");
 
   start = clock();
   do {

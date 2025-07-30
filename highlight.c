@@ -1,17 +1,47 @@
 #include "highlight.h"
 
+#ifdef ENABLE_TREE_SITTER
 #include <string.h>
 
 #include <tree_sitter/api.h>
 
-#include "highlights/json.h"
-#include "highlights/python.h"
 #include "uni.h"
+
+#ifdef ENABLE_JSON_GRAMMAR
+#include "highlights/json.h"
+const TSLanguage *tree_sitter_json(void);
+#endif
+
+#ifdef ENABLE_PYTHON_GRAMMAR
+#include "highlights/python.h"
+const TSLanguage *tree_sitter_python(void);
+#endif
 
 #define CMP_LANG(expected, actual) (!strncmp(expected, actual.p, actual.len))
 
-const TSLanguage *tree_sitter_json(void);
-const TSLanguage *tree_sitter_python(void);
+const TSLanguage *
+find_lang(cmark_str_t lang)
+{
+  if (0) {}
+  #ifdef ENABLE_PYTHON_GRAMMAR
+  else if (
+    CMP_LANG("py", lang)
+    || CMP_LANG("python", lang)
+  ) {
+    return tree_sitter_python();
+  }
+  #endif
+  #ifdef ENABLE_JSON_GRAMMAR
+  else if (
+    CMP_LANG("json", lang)
+  ) {
+    return tree_sitter_json();
+  }
+  #endif
+  else {
+    return 0;
+  }
+}
 
 int
 highlight(dyn_str_t *dst, cmark_str_t lang, cmark_str_t code)
@@ -29,14 +59,8 @@ highlight(dyn_str_t *dst, cmark_str_t lang, cmark_str_t code)
   unsigned short ci;
   const char *name;
 
-  if (
-    CMP_LANG("py", lang)
-    || CMP_LANG("py", lang)
-  ) {
-    language = tree_sitter_python();
-  } else if (CMP_LANG("json", lang)) {
-    language = tree_sitter_json();
-  } else {
+  language = find_lang(lang);
+  if (0 == language) {
     dyn_str_append(dst, code.p, code.len);
     return 0;
   }
@@ -86,3 +110,14 @@ highlight(dyn_str_t *dst, cmark_str_t lang, cmark_str_t code)
 
   return 0;
 }
+
+#else
+
+int
+highlight(dyn_str_t *dst, cmark_str_t lang, cmark_str_t code)
+{
+  dyn_str_append(dst, code.p, code.len);
+  return 0;
+}
+
+#endif

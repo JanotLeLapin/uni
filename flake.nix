@@ -28,6 +28,11 @@
     }));
   in {
     devShells = eachSystem ({ pkgs, ... }: { default = pkgs.callPackage ./shell.nix {}; });
-    packages = eachSystem ({ pkgs, ... }: { default = pkgs.pkgsMusl.callPackage ./default.nix {}; });
+    packages = eachSystem ({ pkgs, ... }: {
+      default = pkgs.pkgsMusl.callPackage ./default.nix {};
+      minimal = pkgs.pkgsMusl.callPackage ./default.nix {
+        enableTreeSitter = false;
+      };
+    });
   };
 }
