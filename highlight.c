@@ -37,7 +37,8 @@ highlight(dyn_str_t *dst, cmark_str_t lang, cmark_str_t code)
   } else if (CMP_LANG("json", lang)) {
     language = tree_sitter_json();
   } else {
-    return -1;
+    dyn_str_append(dst, code.p, code.len);
+    return 0;
   }
 
   parser = ts_parser_new();
