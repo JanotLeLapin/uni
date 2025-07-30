@@ -5,44 +5,62 @@
 , tree-sitter-python
 , tree-sitter-bash
 , tree-sitter-nix
+, lib
+, stdenv
 
 , enableTreeSitter ? true
 , enableJsonGrammar ? true
 , enablePythonGrammar ? true
 , enableBashGrammar ? true
 , enableNixGrammar ? true
-, stdenv
 }: let
-  featureFlags = if enableTreeSitter then [
-    "-DENABLE_TREE_SITTER"
-    (if enableJsonGrammar != null then "-DENABLE_JSON_GRAMMAR" else "")
-    (if enablePythonGrammar != null then "-DENABLE_PYTHON_GRAMMAR" else "")
-    (if enableBashGrammar != null then "-DENABLE_BASH_GRAMMAR" else "")
-    (if enableNixGrammar != null then "-DENABLE_NIX_GRAMMAR" else "")
-  ] else [];
+  grammars = [
+    { name = "json"; package = tree-sitter-json; enabled = enableJsonGrammar; }
+    { name = "python"; package = tree-sitter-python; enabled = enablePythonGrammar; }
+    { name = "bash"; package = tree-sitter-bash; enabled = enableBashGrammar; }
+    { name = "nix"; package = tree-sitter-nix; enabled = enableNixGrammar; }
+  ];
 
-  libraryFlags = if enableTreeSitter then ([ "-lcmarkdown" "-ltree-sitter" ] ++
-    (if enableJsonGrammar != null then [ "-ltree-sitter-json" ] else []) ++
-    (if enablePythonGrammar != null then [ "-ltree-sitter-python" ] else []) ++
-    (if enableBashGrammar != null then [ "-ltree-sitter-bash" ] else []) ++
-    (if enableNixGrammar != null then [ "-ltree-sitter-nix" ] else [])
-  ) else [ "-lcmarkdown" ];
+  enabledGrammars = (builtins.filter (g: g.enabled) grammars);
 
-  includeFlags = if enableTreeSitter then ([ "-I${cmarkdown}/include" "-I${tree-sitter}/include" ] ++
-    (if enableJsonGrammar != null then [ "-I${tree-sitter-json}/include" ] else []) ++
-    (if enablePythonGrammar != null then [ "-I${tree-sitter-python}/include" ] else []) ++
-    (if enableBashGrammar != null then [ "-I${tree-sitter-bash}/include" ] else []) ++
-    (if enableNixGrammar != null then [ "-I${tree-sitter-nix}/include" ] else [])
+  xxdCommands =
+    [ "xxd -i -n style_app ./app.css style/app.h" ] ++
+    (if enableTreeSitter then (
+      [ "xxd -i -n style_code ./code.css style/code.h "] ++
+      (map (g: "xxd -i -n highlights_${g.name} ${g.package}/lib/highlights.scm highlights/${g.name}.h") enabledGrammars)
+    ) else []);
+
+  featureFlags = if enableTreeSitter then (
+    [ "-DENABLE_TREE_SITTER" ] ++
+    (map (g: "-DENABLE_${lib.toUpper g.name}_GRAMMAR") enabledGrammars)
   ) else [];
 
-  linkerFlags = if enableTreeSitter then ([ "-L${cmarkdown}/lib" "-L${tree-sitter}/lib" ] ++
-    (if enableJsonGrammar != null then [ "-L${tree-sitter-json}/lib" ] else []) ++
-    (if enablePythonGrammar != null then [ "-L${tree-sitter-python}/lib" ] else []) ++
-    (if enableBashGrammar != null then [ "-L${tree-sitter-bash}/lib" ] else []) ++
-    (if enableNixGrammar != null then [ "-L${tree-sitter-nix}/lib" ] else [])
-  ) else [];
+  libraryFlags =
+    [ "-lcmarkdown" ] ++
+    (if enableTreeSitter then (
+      [ "-ltree-sitter" ] ++
+      (map (g: "-ltree-sitter-${g.name}") enabledGrammars)
+    ) else []);
 
-  sources = if enableTreeSitter then ([ "main.c" "highlight.c" ]) else ([ "main.c" ]);
+  includeFlags =
+    [ "-I${cmarkdown}/include" ] ++
+    (if enableTreeSitter then (
+      [ "-I${cmarkdown}/include" "-I${tree-sitter}/include" ] ++
+      (map (g: "-I${g.package}/include") enabledGrammars))
+    else []);
+
+  linkerFlags =
+    [ "-L${cmarkdown}/lib" ] ++
+    (if enableTreeSitter then (
+      [ "-L${cmarkdown}/lib" "-L${tree-sitter}/lib" ] ++
+      (map (g: "-L${g.package}/lib") enabledGrammars)
+    ) else []);
+
+  sources =
+    [ "main.c" ] ++
+    (if enableTreeSitter
+      then [ "highlight.c" ]
+      else []);
 in stdenv.mkDerivation {
   pname = "uni";
   version = "0.1";
@@ -54,14 +72,8 @@ in stdenv.mkDerivation {
   buildPhase = ''
     mkdir -p style
     mkdir -p highlights
-    ${if enableTreeSitter then ''
-      xxd -i -n style_code ./code.css style/code.h
-      ${if enableJsonGrammar then "xxd -i -n highlights_json ${tree-sitter-json}/lib/highlights.scm highlights/json.h" else ""}
-      ${if enablePythonGrammar then "xxd -i -n highlights_python ${tree-sitter-python}/lib/highlights.scm highlights/python.h" else ""}
-      ${if enableBashGrammar then "xxd -i -n highlights_bash ${tree-sitter-bash}/lib/highlights.scm highlights/bash.h" else ""}
-      ${if enableNixGrammar then "xxd -i -n highlights_nix ${tree-sitter-nix}/lib/highlights.scm highlights/nix.h" else ""}
-    '' else ""}
-    xxd -i -n style_app ./app.css style/app.h
+    ${builtins.concatStringsSep "\n" xxdCommands}
+
     $CC -static -Wall -Wextra -O3 \
       ${builtins.concatStringsSep " " (builtins.filter (x: x != "") featureFlags)} \
       ${builtins.concatStringsSep " " includeFlags} \
