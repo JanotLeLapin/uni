@@ -2,6 +2,10 @@ code span.variable {
   color: #ef4444;
 }
 
+code span.constant {
+  color: #8b5cf6;
+}
+
 code span.string {
   color: #10b981;
 }
