@@ -22,6 +22,10 @@ highlight(dyn_str_t *dst, cmark_str_t lang, cmark_str_t code)
 }
 #endif
 
+#ifdef ENABLE_TOC
+#include "style/toc.h"
+#endif
+
 static inline void
 embed_stylesheet(dyn_str_t *dst, const char *stylesheet, size_t stylesheet_len)
 {
@@ -29,22 +33,6 @@ embed_stylesheet(dyn_str_t *dst, const char *stylesheet, size_t stylesheet_len)
   dyn_str_append(dst, stylesheet, stylesheet_len);
   DYN_STR_APPEND_PLAIN(dst, "</style>");
 }
-
-#ifdef ENABLE_TREE_SITTER
-
-static inline void
-embed_code_stylesheet(dyn_str_t *dst)
-{
-  embed_stylesheet(dst, style_code, style_code_len);
-}
-
-#else
-
-static inline void
-embed_code_stylesheet(dyn_str_t *dst)
-{}
-
-#endif
 
 static int compile_inline(ctx_t *ctx, dyn_str_t *dst);
 
@@ -302,8 +290,15 @@ main(int argc, char **argv)
   DYN_STR_APPEND_PLAIN(&ctx.str, "<!DOCTYPE html><html><head><title>");
   dyn_str_append(&ctx.str, title, strlen(title));
   DYN_STR_APPEND_PLAIN(&ctx.str, "</title>");
-  embed_code_stylesheet(&ctx.str);
+
   embed_stylesheet(&ctx.str, (char *) style_app, style_app_len);
+  #ifdef ENABLE_TREE_SITTER
+  embed_stylesheet(&ctx.str, (char *) style_code, style_code_len);
+  #endif
+  #ifdef ENABLE_TOC
+  embed_stylesheet(&ctx.str, (char *) style_toc, style_toc_len);
+  #endif
+
   DYN_STR_APPEND_PLAIN(&ctx.str, "</head><body>");
 
   start = clock();

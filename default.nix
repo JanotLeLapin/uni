@@ -29,7 +29,10 @@
     (if enableTreeSitter then (
       [ "xxd -i -n style_code ./code.css style/code.h "] ++
       (map (g: "xxd -i -n highlights_${g.name} ${g.package}/lib/highlights.scm highlights/${g.name}.h") enabledGrammars)
-    ) else []);
+    ) else []) ++
+    (if enableTableOfContents
+      then [ "xxd -i -n style_toc ./toc.css style/toc.h" ]
+      else []);
 
   featureFlags =
     (if enableTreeSitter then (
