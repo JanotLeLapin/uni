@@ -5,7 +5,7 @@ my note taking repository
 - markdown compiler licensed under GNU GPL v3
 - markdown content licensed under CC BY 4.0 (coming soon)
 
-## compiler usage
+## get the compiler
 
 you may use the compiler in your own projects, but do
 note that it doesn't implement many features right now
@@ -40,3 +40,13 @@ note that it doesn't implement many features right now
 
 take a look at [`default.nix`](./default.nix) to see all
 the features you may override
+
+## usage
+
+uni compiler usage
+
+```sh
+uni [options] arguments
+
+-t, --title   html page title
+```
