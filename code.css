@@ -1,9 +1,7 @@
-code span.variable {
+code span.variable,
+code span[class="string.special.key"],
+code span[class="variable.builtin"] {
   color: #ef4444;
-}
-
-code span.constant {
-  color: #8b5cf6;
 }
 
 code span.string {
@@ -23,7 +21,9 @@ code span.function {
   font-style: italic;
 }
 
-code span.keyword {
+code span.keyword,
+code span.constant,
+code span.property {
   color: #8b5cf6;
   font-style: italic;
 }
