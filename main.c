@@ -6,8 +6,6 @@
 #include <unistd.h>
 #include <sys/mman.h>
 
-#include <cmarkdown.h>
-
 #include "uni.h"
 
 #include "style/app.h"
@@ -133,6 +131,79 @@ compile_heading(ctx_t *ctx, dyn_str_t *dst)
 }
 
 static inline int
+compile_heading_toc(ctx_t *ctx, dyn_str_t *dst)
+{
+  dyn_str_t plain;
+  char tag[2], *id;
+  size_t i;
+  cmark_elem_t e;
+
+  if (-1 == dyn_str_init(&plain, 32)) {
+    return 0;
+  }
+
+  tag[0] = 'h';
+  tag[1] = ctx->current.heading + '0';
+
+  DYN_STR_APPEND_PLAIN(dst, "<");
+  dyn_str_append(dst, tag, 2);
+
+  i = ctx->cmark.i;
+  e = ctx->current;
+  while (CMARK_ELEM_BREAK != ctx->current.type && CMARK_ELEM_EOF != ctx->current.type) {
+    ctx->current = cmark_next(&ctx->cmark);
+    switch (ctx->current.type) {
+    case CMARK_ELEM_PLAIN:
+      dyn_str_append(&plain, ctx->current.plain.p, ctx->current.plain.len);
+      break;
+    case CMARK_ELEM_CODE_INLINE:
+      dyn_str_append(&plain, ctx->current.code_inline.p, ctx->current.code_inline.len);
+      break;
+    default:
+      break;
+    }
+  }
+
+  ctx->cmark.i = i;
+  ctx->current = e;
+
+  id = malloc(plain.len);
+  for (i = 0; i < plain.len; i++) {
+    if ('a' <= plain.p[i] && 'z' >= plain.p[i]) {
+      id[i] = plain.p[i];
+    } else if ('A' <= plain.p[i] && 'Z' >= plain.p[i]) {
+      id[i] = plain.p[i] + ('a' - 'A');
+    } else {
+      id[i] = '-';
+    }
+  }
+
+  DYN_STR_APPEND_PLAIN(dst, " id=\"");
+  dyn_str_append(dst, id, plain.len);
+  DYN_STR_APPEND_PLAIN(dst, "\">");
+
+  while (CMARK_ELEM_BREAK != ctx->current.type && CMARK_ELEM_EOF != ctx->current.type) {
+    ctx->current = cmark_next(&ctx->cmark);
+    compile_inline(ctx, dst);
+  }
+
+  DYN_STR_APPEND_PLAIN(dst, "</");
+  dyn_str_append(dst, tag, 2);
+  DYN_STR_APPEND_PLAIN(dst, ">");
+
+  DYN_STR_APPEND_PLAIN(&ctx->toc, "<li><a href=\"#");
+  dyn_str_append(&ctx->toc, id, plain.len);
+  DYN_STR_APPEND_PLAIN(&ctx->toc, "\">");
+  dyn_str_append(&ctx->toc, plain.p, plain.len);
+  DYN_STR_APPEND_PLAIN(&ctx->toc, "</a></li>");
+
+  dyn_str_free(&plain);
+  free(id);
+
+  return 0;
+}
+
+static inline int
 compile_list(ctx_t *ctx, dyn_str_t *dst)
 {
   DYN_STR_APPEND_PLAIN(dst, "<ul>");
@@ -220,6 +291,14 @@ main(int argc, char **argv)
     return -1;
   };
 
+  #ifdef ENABLE_TOC
+  if (-1 == dyn_str_init(&ctx.toc, 64)) {
+    perror("dyn_str_init");
+    dyn_str_free(&ctx.str);
+    return -1;
+  }
+  #endif
+
   DYN_STR_APPEND_PLAIN(&ctx.str, "<!DOCTYPE html><html><head><title>");
   dyn_str_append(&ctx.str, title, strlen(title));
   DYN_STR_APPEND_PLAIN(&ctx.str, "</title>");
@@ -232,7 +311,11 @@ main(int argc, char **argv)
     ctx.current = cmark_next(&ctx.cmark);
     switch (ctx.current.type) {
     case CMARK_ELEM_HEADING:
+      #ifdef ENABLE_TOC
+      compile_heading_toc(&ctx, &ctx.str);
+      #else
       compile_heading(&ctx, &ctx.str);
+      #endif
       break;
     case CMARK_ELEM_LIST_START:
       compile_list(&ctx, &ctx.str);
@@ -251,11 +334,20 @@ main(int argc, char **argv)
 
   fprintf(stderr, "took %fs\n", ((double) (end - start)) / CLOCKS_PER_SEC);
 
+  #ifdef ENABLE_TOC
+  DYN_STR_APPEND_PLAIN(&ctx.str, "<nav><ul>");
+  dyn_str_append(&ctx.str, ctx.toc.p, ctx.toc.len);
+  DYN_STR_APPEND_PLAIN(&ctx.str, "</ul></nav>");
+  #endif
   DYN_STR_APPEND_PLAIN(&ctx.str, "</body></html>");
 
   fprintf(stdout, "%.*s\n", (int) ctx.str.len, ctx.str.p);
 
   dyn_str_free(&ctx.str);
+
+  #ifdef ENABLE_TOC
+  dyn_str_free(&ctx.toc);
+  #endif
 
   munmap(src, len);
 

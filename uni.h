@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <cmarkdown.h>
+
 #define DYN_STR_APPEND_PLAIN(s, str) dyn_str_append(s, str, sizeof(str) - 1)
 
 typedef struct {
@@ -16,6 +18,7 @@ typedef struct {
   cmark_ctx_t cmark;
   dyn_str_t str;
   cmark_elem_t current;
+  dyn_str_t toc;
 } ctx_t;
 
 static inline int

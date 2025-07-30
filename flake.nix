@@ -50,6 +50,7 @@
       default = pkgs.pkgsMusl.callPackage ./default.nix {};
       minimal = pkgs.pkgsMusl.callPackage ./default.nix {
         enableTreeSitter = false;
+        enableTableOfContents = false;
       };
     });
   };

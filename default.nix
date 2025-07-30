@@ -13,6 +13,7 @@
 , enablePythonGrammar ? true
 , enableBashGrammar ? true
 , enableNixGrammar ? true
+, enableTableOfContents ? true
 }: let
   grammars = [
     { name = "json"; package = tree-sitter-json; enabled = enableJsonGrammar; }
@@ -30,10 +31,12 @@
       (map (g: "xxd -i -n highlights_${g.name} ${g.package}/lib/highlights.scm highlights/${g.name}.h") enabledGrammars)
     ) else []);
 
-  featureFlags = if enableTreeSitter then (
-    [ "-DENABLE_TREE_SITTER" ] ++
-    (map (g: "-DENABLE_${lib.toUpper g.name}_GRAMMAR") enabledGrammars)
-  ) else [];
+  featureFlags =
+    (if enableTreeSitter then (
+      [ "-DENABLE_TREE_SITTER" ] ++
+      (map (g: "-DENABLE_${lib.toUpper g.name}_GRAMMAR") enabledGrammars)
+    ) else []) ++
+    (if enableTableOfContents then [ "-DENABLE_TOC" ] else []);
 
   libraryFlags =
     [ "-lcmarkdown" ] ++
