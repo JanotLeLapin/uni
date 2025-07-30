@@ -54,6 +54,7 @@ in stdenv.mkDerivation {
       ${if enablePythonGrammar then "xxd -i -n highlights_python ${tree-sitter-python}/lib/highlights.scm highlights/python.h" else ""}
       ${if enableBashGrammar then "xxd -i -n highlights_bash ${tree-sitter-bash}/lib/highlights.scm highlights/bash.h" else ""}
     '' else ""}
+    xxd -i -n style_app ./app.css style/app.h
     $CC -static -Wall -Wextra -O3 \
       ${builtins.concatStringsSep " " (builtins.filter (x: x != "") featureFlags)} \
       ${builtins.concatStringsSep " " includeFlags} \

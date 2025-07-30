@@ -14,6 +14,9 @@
 #include "highlight.h"
 #include "style/code.h"
 #else
+
+#include "style/app.h"
+
 int
 highlight(dyn_str_t *dst, cmark_str_t lang, cmark_str_t code)
 {
@@ -227,6 +230,7 @@ main(int argc, char **argv)
   dyn_str_append(&ctx.str, title, strlen(title));
   DYN_STR_APPEND_PLAIN(&ctx.str, "</title>");
   embed_code_stylesheet(&ctx.str);
+  embed_stylesheet(&ctx.str, (char *) style_app, style_app_len);
   DYN_STR_APPEND_PLAIN(&ctx.str, "</head><body>");
 
   start = clock();
