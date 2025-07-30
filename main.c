@@ -10,13 +10,12 @@
 
 #include "uni.h"
 
+#include "style/app.h"
+
 #ifdef ENABLE_TREE_SITTER
 #include "highlight.h"
 #include "style/code.h"
 #else
-
-#include "style/app.h"
-
 int
 highlight(dyn_str_t *dst, cmark_str_t lang, cmark_str_t code)
 {
@@ -165,11 +164,12 @@ compile_list(ctx_t *ctx, dyn_str_t *dst)
 static inline int
 compile_code_multiline(ctx_t *ctx, dyn_str_t *dst)
 {
-  DYN_STR_APPEND_PLAIN(dst, "<code><pre class=\"code-");
+  DYN_STR_APPEND_PLAIN(dst, "<pre class=\"code-");
   dyn_str_append(dst, ctx->current.code_multiline.lang.p, ctx->current.code_multiline.lang.len);
   DYN_STR_APPEND_PLAIN(dst, "\">");
+  DYN_STR_APPEND_PLAIN(dst, "<code>");
   highlight(dst, ctx->current.code_multiline.lang, ctx->current.code_multiline.content);
-  DYN_STR_APPEND_PLAIN(dst, "</pre></code>");
+  DYN_STR_APPEND_PLAIN(dst, "</code></pre>");
 
   return 0;
 }
