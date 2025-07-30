@@ -130,10 +130,8 @@ compile_code_multiline(ctx_t *ctx, dyn_str_t *dst)
   dyn_str_append(dst, "<pre class=\"code-", 17);
   dyn_str_append(dst, ctx->current.code_multiline.lang.p, ctx->current.code_multiline.lang.len);
   dyn_str_append(dst, "\">", 2);
-  dyn_str_append(dst, ctx->current.code_multiline.content.p, ctx->current.code_multiline.content.len);
+  highlight(dst, ctx->current.code_multiline.lang, ctx->current.code_multiline.content);
   dyn_str_append(dst, "</pre>", 6);
-
-  highlight(ctx->current.code_multiline.content);
 
   return 0;
 }

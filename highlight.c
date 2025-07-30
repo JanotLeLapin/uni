@@ -1,6 +1,6 @@
 #include "highlight.h"
 
-#include <stdio.h>
+#include <string.h>
 
 #include <tree_sitter/api.h>
 
@@ -11,10 +11,11 @@ const TSLanguage *tree_sitter_json(void);
 const TSLanguage *tree_sitter_python(void);
 
 int
-highlight(cmark_str_t code)
+highlight(dyn_str_t *dst, cmark_str_t lang, cmark_str_t code)
 {
   unsigned int err_offset, start, end, name_length;
-  TSParser *parser = ts_parser_new();
+  TSParser *parser;
+  const TSLanguage *language;
   TSQuery *query;
   TSQueryCursor *query_cursor;
   TSTree *tree;
@@ -24,7 +25,16 @@ highlight(cmark_str_t code)
   unsigned short i;
   const char *name;
 
-  ts_parser_set_language(parser, tree_sitter_python());
+  if (!strncmp("py", lang.p, lang.len)) {
+    language = tree_sitter_python();
+  } else if (!strncmp("json", lang.p, lang.len)) {
+    language = tree_sitter_json();
+  } else {
+    return -1;
+  }
+
+  parser = ts_parser_new();
+  ts_parser_set_language(parser, language);
 
   query = ts_query_new(tree_sitter_python(), (char *) highlights_python, highlights_python_len, &err_offset, &err);
   if (!query) {
@@ -41,7 +51,11 @@ highlight(cmark_str_t code)
       start = ts_node_start_byte(match.captures[i].node);
       end = ts_node_end_byte(match.captures[i].node);
       name = ts_query_capture_name_for_id(query, match.captures[i].index, &name_length);
-      fprintf(stderr, "%.*s: %.*s\n", name_length, name, end - start, code.p + start);
+      dyn_str_append(dst, "<span class=\"", 13);
+      dyn_str_append(dst, name, name_length);
+      dyn_str_append(dst, "\">", 2);
+      dyn_str_append(dst, code.p + start, end - start);
+      dyn_str_append(dst, "</span>", 7);
     }
   }
 

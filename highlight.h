@@ -7,6 +7,6 @@
 
 #include <tree_sitter/api.h>
 
-int highlight(cmark_str_t code);
+int highlight(dyn_str_t *dst, cmark_str_t lang, cmark_str_t code);
 
 #endif
