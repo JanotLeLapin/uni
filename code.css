@@ -1,37 +1,34 @@
 code span.variable,
-code span[class="string.special.key"],
 code span[class="variable.builtin"] {
-  color: #ef4444;
+  color: var(--color-red);
 }
 
 code span.string {
-  color: #10b981;
-}
-
-code span[class="string.special.key"] {
-  color: #ef4444;
+  color: var(--color-green);
 }
 
 code span.type {
-  color: #06b6d4;
+  color: var(--color-cyan);
 }
 
 code span.function {
-  color: #3b82f6;
+  color: var(--color-blue);
   font-style: italic;
 }
 
 code span.keyword,
 code span.constant,
-code span.property {
-  color: #8b5cf6;
+code span.property,
+code span[class="string.special.key"] {
+  color: var(--color-purple);
   font-style: italic;
 }
 
 code span.number {
-  color: #f97316;
+  color: var(--color-orange);
 }
 
 code span.comment {
+  color: var(--color-grey);
   font-style: italic;
 }
