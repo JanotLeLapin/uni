@@ -6,6 +6,10 @@ code span.string {
   color: #10b981;
 }
 
+code span[class="string.special.key"] {
+  color: #ef4444;
+}
+
 code span.type {
   color: #06b6d4;
 }
