@@ -12,6 +12,12 @@ typedef struct {
   size_t capacity;
 } dyn_str_t;
 
+typedef struct {
+  cmark_ctx_t cmark;
+  dyn_str_t str;
+  cmark_elem_t current;
+} ctx_t;
+
 static inline int
 dyn_str_init(dyn_str_t *s, size_t initial_cap)
 {

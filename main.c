@@ -24,12 +24,6 @@ highlight(dyn_str_t *dst, cmark_str_t lang, cmark_str_t code)
 }
 #endif
 
-typedef struct {
-  cmark_ctx_t cmark;
-  dyn_str_t str;
-  cmark_elem_t current;
-} ctx_t;
-
 static inline void
 embed_stylesheet(dyn_str_t *dst, const char *stylesheet, size_t stylesheet_len)
 {
