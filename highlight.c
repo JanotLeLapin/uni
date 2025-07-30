@@ -6,6 +6,7 @@
 
 #include "highlights/json.h"
 #include "highlights/python.h"
+#include "uni.h"
 
 const TSLanguage *tree_sitter_json(void);
 const TSLanguage *tree_sitter_python(void);
@@ -22,7 +23,8 @@ highlight(dyn_str_t *dst, cmark_str_t lang, cmark_str_t code)
   TSNode root;
   TSQueryMatch match;
   TSQueryError err;
-  unsigned short i;
+  size_t i = 0;
+  unsigned short ci;
   const char *name;
 
   if (!strncmp("py", lang.p, lang.len)) {
@@ -47,10 +49,18 @@ highlight(dyn_str_t *dst, cmark_str_t lang, cmark_str_t code)
   ts_query_cursor_exec(query_cursor, query, root);
 
   while (ts_query_cursor_next_match(query_cursor, &match)) {
-    for (i = 0; i < match.capture_count; i++) {
-      start = ts_node_start_byte(match.captures[i].node);
-      end = ts_node_end_byte(match.captures[i].node);
-      name = ts_query_capture_name_for_id(query, match.captures[i].index, &name_length);
+    for (ci = 0; ci < match.capture_count; ci++) {
+      start = ts_node_start_byte(match.captures[ci].node);
+      end = ts_node_end_byte(match.captures[ci].node);
+      name = ts_query_capture_name_for_id(query, match.captures[ci].index, &name_length);
+
+      if (i < start) {
+        dyn_str_append(dst, code.p + i, start - i);
+        i = end;
+      } else {
+        continue;
+      }
+
       dyn_str_append(dst, "<span class=\"", 13);
       dyn_str_append(dst, name, name_length);
       dyn_str_append(dst, "\">", 2);
@@ -58,6 +68,8 @@ highlight(dyn_str_t *dst, cmark_str_t lang, cmark_str_t code)
       dyn_str_append(dst, "</span>", 7);
     }
   }
+
+  dyn_str_append(dst, code.p + i, code.len - i);
 
   ts_tree_delete(tree);
   ts_query_cursor_delete(query_cursor);
