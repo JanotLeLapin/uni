@@ -22,5 +22,6 @@
       mkdir -p $out/lib
       cp libtree-sitter-${lang}.so $out/lib
       cp libtree-sitter-${lang}.a $out/lib
+      cp queries/highlights.scm $out/lib
     '';
   }
