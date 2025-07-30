@@ -9,7 +9,7 @@ code span.string {
 
 code span.type,
 code span[class="type.builtin"] {
-  color: var(--color-cyan);
+  color: var(--color-yellow);
 }
 
 code span.function,
