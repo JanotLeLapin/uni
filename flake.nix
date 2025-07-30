@@ -23,6 +23,11 @@
             version = "0.23.6";
             rev = "bffb65a8cfe4e46290331dfef0dbf0ef3679de11";
           } self.pkgsMusl;
+          tree-sitter-bash = import ./grammar.nix {
+            lang = "bash";
+            version = "0.25.0";
+            rev = "56b54c61fb48bce0c63e3dfa2240b5d274384763";
+          } self.pkgsMusl;
         })];
       });
     }));

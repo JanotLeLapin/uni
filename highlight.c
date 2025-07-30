@@ -14,6 +14,11 @@ const TSLanguage *tree_sitter_json(void);
 const TSLanguage *tree_sitter_python(void);
 #endif
 
+#ifdef ENABLE_BASH_GRAMMAR
+#include "highlights/bash.h"
+const TSLanguage *tree_sitter_bash(void);
+#endif
+
 #define CMP_LANG(expected, actual) (sizeof(expected) == actual.len + 1 && !strncmp(expected, actual.p, actual.len))
 
 typedef struct {
@@ -44,6 +49,18 @@ find_lang(lang_t *dst, cmark_str_t lang)
     dst->ts = tree_sitter_json();
     dst->highlights = highlights_json;
     dst->highlights_len = highlights_json_len;
+    return 1;
+  }
+  #endif
+  #ifdef ENABLE_BASH_GRAMMAR
+  else if (
+    CMP_LANG("bash", lang)
+    || CMP_LANG("sh", lang)
+    || CMP_LANG("shell", lang)
+  ) {
+    dst->ts = tree_sitter_bash();
+    dst->highlights = highlights_bash;
+    dst->highlights_len = highlights_bash_len;
     return 1;
   }
   #endif
