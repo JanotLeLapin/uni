@@ -7,11 +7,13 @@ code span.string {
   color: var(--color-green);
 }
 
-code span.type {
+code span.type,
+code span[class="type.builtin"] {
   color: var(--color-cyan);
 }
 
-code span.function {
+code span.function,
+code span[class="function.method"] {
   color: var(--color-blue);
   font-style: italic;
 }

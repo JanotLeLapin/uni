@@ -23,6 +23,11 @@
             version = "0.23.6";
             rev = "bffb65a8cfe4e46290331dfef0dbf0ef3679de11";
           } self.pkgsMusl;
+          tree-sitter-java = import ./grammar.nix {
+            lang = "java";
+            version = "0.23.5";
+            rev = "94703d5a6bed02b98e438d7cad1136c01a60ba2c";
+          } self.pkgsMusl;
           tree-sitter-bash = import ./grammar.nix {
             lang = "bash";
             version = "0.25.0";
