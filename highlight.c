@@ -1,8 +1,5 @@
 #include "highlight.h"
 
-#ifdef ENABLE_TREE_SITTER
-#include <string.h>
-
 #include <tree_sitter/api.h>
 
 #include "uni.h"
@@ -17,10 +14,16 @@ const TSLanguage *tree_sitter_json(void);
 const TSLanguage *tree_sitter_python(void);
 #endif
 
-#define CMP_LANG(expected, actual) (!strncmp(expected, actual.p, actual.len))
+#define CMP_LANG(expected, actual) (sizeof(expected) == actual.len + 1 && !strncmp(expected, actual.p, actual.len))
 
-const TSLanguage *
-find_lang(cmark_str_t lang)
+typedef struct {
+  const TSLanguage *ts;
+  const char *highlights;
+  size_t highlights_len;
+} lang_t;
+
+static inline char
+find_lang(lang_t *dst, cmark_str_t lang)
 {
   if (0) {}
   #ifdef ENABLE_PYTHON_GRAMMAR
@@ -28,14 +31,20 @@ find_lang(cmark_str_t lang)
     CMP_LANG("py", lang)
     || CMP_LANG("python", lang)
   ) {
-    return tree_sitter_python();
+    dst->ts = tree_sitter_python();
+    dst->highlights = highlights_python;
+    dst->highlights_len = highlights_python_len;
+    return 1;
   }
   #endif
   #ifdef ENABLE_JSON_GRAMMAR
   else if (
     CMP_LANG("json", lang)
   ) {
-    return tree_sitter_json();
+    dst->ts = tree_sitter_json();
+    dst->highlights = highlights_json;
+    dst->highlights_len = highlights_json_len;
+    return 1;
   }
   #endif
   else {
@@ -48,7 +57,7 @@ highlight(dyn_str_t *dst, cmark_str_t lang, cmark_str_t code)
 {
   unsigned int err_offset, start, end, name_length;
   TSParser *parser;
-  const TSLanguage *language;
+  lang_t language;
   TSQuery *query;
   TSQueryCursor *query_cursor;
   TSTree *tree;
@@ -59,16 +68,15 @@ highlight(dyn_str_t *dst, cmark_str_t lang, cmark_str_t code)
   unsigned short ci;
   const char *name;
 
-  language = find_lang(lang);
-  if (0 == language) {
+  if (0 == find_lang(&language, lang)) {
     dyn_str_append(dst, code.p, code.len);
     return 0;
   }
 
   parser = ts_parser_new();
-  ts_parser_set_language(parser, language);
+  ts_parser_set_language(parser, language.ts);
 
-  query = ts_query_new(tree_sitter_python(), (char *) highlights_python, highlights_python_len, &err_offset, &err);
+  query = ts_query_new(language.ts, (char *) language.highlights, language.highlights_len, &err_offset, &err);
   if (!query) {
     return -1;
   }
@@ -110,14 +118,3 @@ highlight(dyn_str_t *dst, cmark_str_t lang, cmark_str_t code)
 
   return 0;
 }
-
-#else
-
-int
-highlight(dyn_str_t *dst, cmark_str_t lang, cmark_str_t code)
-{
-  dyn_str_append(dst, code.p, code.len);
-  return 0;
-}
-
-#endif

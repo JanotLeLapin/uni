@@ -29,6 +29,8 @@
     (if enableJsonGrammar != null then [ "-L${tree-sitter-json}/lib" ] else []) ++
     (if enablePythonGrammar != null then [ "-L${tree-sitter-python}/lib" ] else [])
   ) else [];
+
+  sources = if enableTreeSitter then ([ "main.c" "highlight.c" ]) else ([ "main.c" ]);
 in stdenv.mkDerivation {
   pname = "uni";
   version = "0.1";
@@ -50,7 +52,7 @@ in stdenv.mkDerivation {
       ${builtins.concatStringsSep " " (builtins.filter (x: x != "") featureFlags)} \
       ${builtins.concatStringsSep " " includeFlags} \
       ${builtins.concatStringsSep " " linkerFlags} \
-      main.c highlight.c \
+      ${builtins.concatStringsSep " " sources} \
       ${builtins.concatStringsSep " " libraryFlags} \
       -o main
   '';

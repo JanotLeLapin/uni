@@ -1,10 +1,3 @@
-#include "uni.h"
-#include "highlight.h"
-
-#ifdef ENABLE_TREE_SITTER
-#include "style/code.h"
-#endif
-
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,6 +7,20 @@
 #include <sys/mman.h>
 
 #include <cmarkdown.h>
+
+#include "uni.h"
+
+#ifdef ENABLE_TREE_SITTER
+#include "highlight.h"
+#include "style/code.h"
+#else
+int
+highlight(dyn_str_t *dst, cmark_str_t lang, cmark_str_t code)
+{
+  dyn_str_append(dst, code.p, code.len);
+  return 0;
+}
+#endif
 
 typedef struct {
   cmark_ctx_t cmark;
