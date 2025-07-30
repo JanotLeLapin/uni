@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define DYN_STR_APPEND_PLAIN(s, str) dyn_str_append(s, str, sizeof(str) - 1)
+
 typedef struct {
   char *p;
   size_t len;

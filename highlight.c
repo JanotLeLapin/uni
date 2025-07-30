@@ -61,11 +61,11 @@ highlight(dyn_str_t *dst, cmark_str_t lang, cmark_str_t code)
         continue;
       }
 
-      dyn_str_append(dst, "<span class=\"", 13);
+      DYN_STR_APPEND_PLAIN(dst, "<span class=\"");
       dyn_str_append(dst, name, name_length);
-      dyn_str_append(dst, "\">", 2);
+      DYN_STR_APPEND_PLAIN(dst, "\">");
       dyn_str_append(dst, code.p + start, end - start);
-      dyn_str_append(dst, "</span>", 7);
+      DYN_STR_APPEND_PLAIN(dst, "</span>");
     }
   }
 

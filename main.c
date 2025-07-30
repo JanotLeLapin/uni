@@ -43,11 +43,11 @@ compile_anchor(ctx_t *ctx, dyn_str_t *dst)
     compile_inline(ctx, &content);
   }
 
-  dyn_str_append(dst, "<a href=\"", 9);
+  DYN_STR_APPEND_PLAIN(dst, "<a href=\"");
   dyn_str_append(dst, ctx->current.anchor_link.p, ctx->current.anchor_link.len);
-  dyn_str_append(dst, "\">", 2);
+  DYN_STR_APPEND_PLAIN(dst, "\">");
   dyn_str_append(dst, content.p, content.len);
-  dyn_str_append(dst, "</a>", 4);
+  DYN_STR_APPEND_PLAIN(dst, "</a>");
 
   dyn_str_free(&content);
 
@@ -57,9 +57,9 @@ compile_anchor(ctx_t *ctx, dyn_str_t *dst)
 static inline int
 compile_code_inline(ctx_t *ctx, dyn_str_t *dst)
 {
-  dyn_str_append(dst, "<code>", 6);
+  DYN_STR_APPEND_PLAIN(dst, "<code>");
   dyn_str_append(dst, ctx->current.code_inline.p, ctx->current.code_inline.len);
-  dyn_str_append(dst, "</code>", 7);
+  DYN_STR_APPEND_PLAIN(dst, "</code>");
 
   return 0;
 }
@@ -87,7 +87,7 @@ compile_heading(ctx_t *ctx, dyn_str_t *dst)
   tag[1] = ctx->current.heading + '0';
   tag[2] = '>';
 
-  dyn_str_append(dst, "<", 1);
+  DYN_STR_APPEND_PLAIN(dst, "<");
   dyn_str_append(dst, tag, 3);
 
   while (CMARK_ELEM_BREAK != ctx->current.type && CMARK_ELEM_EOF != ctx->current.type) {
@@ -95,7 +95,7 @@ compile_heading(ctx_t *ctx, dyn_str_t *dst)
     compile_inline(ctx, dst);
   }
 
-  dyn_str_append(dst, "</", 2);
+  DYN_STR_APPEND_PLAIN(dst, "</");
   dyn_str_append(dst, tag, 3);
 
   return 0;
@@ -104,11 +104,11 @@ compile_heading(ctx_t *ctx, dyn_str_t *dst)
 static inline int
 compile_list(ctx_t *ctx, dyn_str_t *dst)
 {
-  dyn_str_append(dst, "<ul>", 4);
+  DYN_STR_APPEND_PLAIN(dst, "<ul>");
 
   cmark_next(&ctx->cmark);
   while (CMARK_ELEM_LIST_END != ctx->current.type) {
-    dyn_str_append(dst, "<li>", 4);
+    DYN_STR_APPEND_PLAIN(dst, "<li>");
     do {
       ctx->current = cmark_next(&ctx->cmark);
       if (CMARK_ELEM_LIST_END == ctx->current.type) {
@@ -116,10 +116,10 @@ compile_list(ctx_t *ctx, dyn_str_t *dst)
       }
       compile_inline(ctx, dst);
     } while (CMARK_ELEM_LIST_ITEM != ctx->current.type);
-    dyn_str_append(dst, "</li>", 5);
+    DYN_STR_APPEND_PLAIN(dst, "</li>");
   }
 
-  dyn_str_append(dst, "</ul>", 5);
+  DYN_STR_APPEND_PLAIN(dst, "</ul>");
 
   return 0;
 }
@@ -127,11 +127,11 @@ compile_list(ctx_t *ctx, dyn_str_t *dst)
 static inline int
 compile_code_multiline(ctx_t *ctx, dyn_str_t *dst)
 {
-  dyn_str_append(dst, "<pre class=\"code-", 17);
+  DYN_STR_APPEND_PLAIN(dst, "<pre class=\"code-");
   dyn_str_append(dst, ctx->current.code_multiline.lang.p, ctx->current.code_multiline.lang.len);
-  dyn_str_append(dst, "\">", 2);
+  DYN_STR_APPEND_PLAIN(dst, "\">");
   highlight(dst, ctx->current.code_multiline.lang, ctx->current.code_multiline.content);
-  dyn_str_append(dst, "</pre>", 6);
+  DYN_STR_APPEND_PLAIN(dst, "</pre>");
 
   return 0;
 }
@@ -139,7 +139,7 @@ compile_code_multiline(ctx_t *ctx, dyn_str_t *dst)
 static inline int
 compile_paragraph(ctx_t *ctx, dyn_str_t *dst)
 {
-  dyn_str_append(dst, "<p>", 3);
+  DYN_STR_APPEND_PLAIN(dst, "<p>");
 
   compile_inline(ctx, dst);
   while (CMARK_ELEM_BREAK != ctx->current.type && CMARK_ELEM_EOF != ctx->current.type) {
@@ -147,7 +147,7 @@ compile_paragraph(ctx_t *ctx, dyn_str_t *dst)
     compile_inline(ctx, dst);
   }
 
-  dyn_str_append(dst, "</p>", 4);
+  DYN_STR_APPEND_PLAIN(dst, "</p>");
 
   return 0;
 }
