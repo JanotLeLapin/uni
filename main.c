@@ -190,6 +190,8 @@ compile_paragraph(ctx_t *ctx, dyn_str_t *dst)
 int
 main(int argc, char **argv)
 {
+  int i = 1;
+  const char *title = "uni";
   ctx_t ctx;
   int fd;
   char *src;
@@ -201,7 +203,16 @@ main(int argc, char **argv)
     return -1;
   }
 
-  fd = open(argv[1], O_RDONLY);
+  while (1) {
+    if (!strcmp("--title", argv[i]) || !strcmp("-t", argv[i])) {
+      title = argv[++i];
+      i++;
+    } else {
+      break;
+    }
+  }
+
+  fd = open(argv[i], O_RDONLY);
 
   len = lseek(fd, 0, SEEK_END);
   src = mmap(0, len, PROT_READ, MAP_PRIVATE, fd, 0);
@@ -212,7 +223,9 @@ main(int argc, char **argv)
     return -1;
   };
 
-  DYN_STR_APPEND_PLAIN(&ctx.str, "<!DOCTYPE html><html><head><title>Hello, World!</title>");
+  DYN_STR_APPEND_PLAIN(&ctx.str, "<!DOCTYPE html><html><head><title>");
+  dyn_str_append(&ctx.str, title, strlen(title));
+  DYN_STR_APPEND_PLAIN(&ctx.str, "</title>");
   embed_code_stylesheet(&ctx.str);
   DYN_STR_APPEND_PLAIN(&ctx.str, "</head><body>");
 
