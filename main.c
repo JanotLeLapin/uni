@@ -299,7 +299,7 @@ main(int argc, char **argv)
   embed_stylesheet(&ctx.str, (char *) style_toc, style_toc_len);
   #endif
 
-  DYN_STR_APPEND_PLAIN(&ctx.str, "</head><body>");
+  DYN_STR_APPEND_PLAIN(&ctx.str, "</head><body><main>");
 
   start = clock();
   do {
@@ -330,11 +330,12 @@ main(int argc, char **argv)
   fprintf(stderr, "took %fs\n", ((double) (end - start)) / CLOCKS_PER_SEC);
 
   #ifdef ENABLE_TOC
-  DYN_STR_APPEND_PLAIN(&ctx.str, "<nav><ul>");
+  DYN_STR_APPEND_PLAIN(&ctx.str, "</main><nav><ul>");
   dyn_str_append(&ctx.str, ctx.toc.p, ctx.toc.len);
-  DYN_STR_APPEND_PLAIN(&ctx.str, "</ul></nav>");
+  DYN_STR_APPEND_PLAIN(&ctx.str, "</ul></nav></body></html>");
+  #else
+  DYN_STR_APPEND_PLAIN(&ctx.str, "</main></body></html>");
   #endif
-  DYN_STR_APPEND_PLAIN(&ctx.str, "</body></html>");
 
   fprintf(stdout, "%.*s\n", (int) ctx.str.len, ctx.str.p);
 
