@@ -8,6 +8,8 @@
 #include "highlights/python.h"
 #include "uni.h"
 
+#define CMP_LANG(expected, actual) (!strncmp(expected, actual.p, actual.len))
+
 const TSLanguage *tree_sitter_json(void);
 const TSLanguage *tree_sitter_python(void);
 
@@ -27,9 +29,12 @@ highlight(dyn_str_t *dst, cmark_str_t lang, cmark_str_t code)
   unsigned short ci;
   const char *name;
 
-  if (!strncmp("py", lang.p, lang.len)) {
+  if (
+    CMP_LANG("py", lang)
+    || CMP_LANG("py", lang)
+  ) {
     language = tree_sitter_python();
-  } else if (!strncmp("json", lang.p, lang.len)) {
+  } else if (CMP_LANG("json", lang)) {
     language = tree_sitter_json();
   } else {
     return -1;
