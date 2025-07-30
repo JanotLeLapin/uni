@@ -1,0 +1,29 @@
+code span.variable {
+  color: #ef4444;
+}
+
+code span.string {
+  color: #10b981;
+}
+
+code span.type {
+  color: #06b6d4;
+}
+
+code span.function {
+  color: #3b82f6;
+  font-style: italic;
+}
+
+code span.keyword {
+  color: #8b5cf6;
+  font-style: italic;
+}
+
+code span.number {
+  color: #f97316;
+}
+
+code span.comment {
+  font-style: italic;
+}

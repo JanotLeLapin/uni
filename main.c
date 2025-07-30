@@ -1,6 +1,8 @@
 #include "uni.h"
 #include "highlight.h"
 
+#include "style/code.h"
+
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -127,11 +129,11 @@ compile_list(ctx_t *ctx, dyn_str_t *dst)
 static inline int
 compile_code_multiline(ctx_t *ctx, dyn_str_t *dst)
 {
-  DYN_STR_APPEND_PLAIN(dst, "<pre class=\"code-");
+  DYN_STR_APPEND_PLAIN(dst, "<code><pre class=\"code-");
   dyn_str_append(dst, ctx->current.code_multiline.lang.p, ctx->current.code_multiline.lang.len);
   DYN_STR_APPEND_PLAIN(dst, "\">");
   highlight(dst, ctx->current.code_multiline.lang, ctx->current.code_multiline.content);
-  DYN_STR_APPEND_PLAIN(dst, "</pre>");
+  DYN_STR_APPEND_PLAIN(dst, "</pre></code>");
 
   return 0;
 }
@@ -177,6 +179,10 @@ main(int argc, char **argv)
     return -1;
   };
 
+  DYN_STR_APPEND_PLAIN(&ctx.str, "<!DOCTYPE html><html><head><title>Hello, World!</title><style>");
+  dyn_str_append(&ctx.str, (char *) style_code, style_code_len);
+  DYN_STR_APPEND_PLAIN(&ctx.str, "</style></head><body>");
+
   start = clock();
   do {
     ctx.current = cmark_next(&ctx.cmark);
@@ -200,8 +206,11 @@ main(int argc, char **argv)
   } while (CMARK_ELEM_EOF != ctx.current.type);
   end = clock();
 
-  fprintf(stdout, "%.*s\n", (int) ctx.str.len, ctx.str.p);
   fprintf(stderr, "took %fs\n", ((double) (end - start)) / CLOCKS_PER_SEC);
+
+  DYN_STR_APPEND_PLAIN(&ctx.str, "</body></html>");
+
+  fprintf(stdout, "%.*s\n", (int) ctx.str.len, ctx.str.p);
 
   dyn_str_free(&ctx.str);
 
