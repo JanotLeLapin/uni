@@ -19,6 +19,11 @@ const TSLanguage *tree_sitter_python(void);
 const TSLanguage *tree_sitter_bash(void);
 #endif
 
+#ifdef ENABLE_NIX_GRAMMAR
+#include "highlights/nix.h"
+const TSLanguage *tree_sitter_nix(void);
+#endif
+
 #define CMP_LANG(expected, actual) (sizeof(expected) == actual.len + 1 && !strncmp(expected, actual.p, actual.len))
 
 typedef struct {
@@ -61,6 +66,14 @@ find_lang(lang_t *dst, cmark_str_t lang)
     dst->ts = tree_sitter_bash();
     dst->highlights = highlights_bash;
     dst->highlights_len = highlights_bash_len;
+    return 1;
+  }
+  #endif
+  #ifdef ENABLE_NIX_GRAMMAR
+  else if (CMP_LANG("nix", lang)) {
+    dst->ts = tree_sitter_nix();
+    dst->highlights = highlights_nix;
+    dst->highlights_len = highlights_nix_len;
     return 1;
   }
   #endif

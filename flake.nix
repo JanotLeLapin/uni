@@ -28,6 +28,19 @@
             version = "0.25.0";
             rev = "56b54c61fb48bce0c63e3dfa2240b5d274384763";
           } self.pkgsMusl;
+          tree-sitter-nix = (import ./grammar.nix {
+            lang = "nix";
+            version = "0.3.0";
+            rev = "ea1d87f7996be1329ef6555dcacfa63a69bd55c6";
+            url = "https://github.com/nix-community/tree-sitter-nix";
+          } self.pkgsMusl).overrideAttrs (oldAttrs: {
+            buildPhase = ''
+              $CC -Isrc -std=c11 -fPIC -c -o parser.o src/parser.c
+              $CC -Isrc -std=c11 -fPIC -c -o scanner.o src/scanner.c
+              $CC -shared -Wl,-soname,libtree-sitter-nix.so.13.0 parser.o scanner.o -o libtree-sitter-nix.so
+              ar -rv libtree-sitter-nix.a parser.o scanner.o
+            '';
+          });
         })];
       });
     }));

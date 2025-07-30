@@ -4,11 +4,13 @@
 , tree-sitter-json
 , tree-sitter-python
 , tree-sitter-bash
+, tree-sitter-nix
 
 , enableTreeSitter ? true
 , enableJsonGrammar ? true
 , enablePythonGrammar ? true
 , enableBashGrammar ? true
+, enableNixGrammar ? true
 , stdenv
 }: let
   featureFlags = if enableTreeSitter then [
@@ -16,24 +18,28 @@
     (if enableJsonGrammar != null then "-DENABLE_JSON_GRAMMAR" else "")
     (if enablePythonGrammar != null then "-DENABLE_PYTHON_GRAMMAR" else "")
     (if enableBashGrammar != null then "-DENABLE_BASH_GRAMMAR" else "")
+    (if enableNixGrammar != null then "-DENABLE_NIX_GRAMMAR" else "")
   ] else [];
 
   libraryFlags = if enableTreeSitter then ([ "-lcmarkdown" "-ltree-sitter" ] ++
     (if enableJsonGrammar != null then [ "-ltree-sitter-json" ] else []) ++
     (if enablePythonGrammar != null then [ "-ltree-sitter-python" ] else []) ++
-    (if enableBashGrammar != null then [ "-ltree-sitter-bash" ] else [])
+    (if enableBashGrammar != null then [ "-ltree-sitter-bash" ] else []) ++
+    (if enableNixGrammar != null then [ "-ltree-sitter-nix" ] else [])
   ) else [ "-lcmarkdown" ];
 
   includeFlags = if enableTreeSitter then ([ "-I${cmarkdown}/include" "-I${tree-sitter}/include" ] ++
     (if enableJsonGrammar != null then [ "-I${tree-sitter-json}/include" ] else []) ++
     (if enablePythonGrammar != null then [ "-I${tree-sitter-python}/include" ] else []) ++
-    (if enableBashGrammar != null then [ "-I${tree-sitter-bash}/include" ] else [])
+    (if enableBashGrammar != null then [ "-I${tree-sitter-bash}/include" ] else []) ++
+    (if enableNixGrammar != null then [ "-I${tree-sitter-nix}/include" ] else [])
   ) else [];
 
   linkerFlags = if enableTreeSitter then ([ "-L${cmarkdown}/lib" "-L${tree-sitter}/lib" ] ++
     (if enableJsonGrammar != null then [ "-L${tree-sitter-json}/lib" ] else []) ++
     (if enablePythonGrammar != null then [ "-L${tree-sitter-python}/lib" ] else []) ++
-    (if enableBashGrammar != null then [ "-L${tree-sitter-bash}/lib" ] else [])
+    (if enableBashGrammar != null then [ "-L${tree-sitter-bash}/lib" ] else []) ++
+    (if enableNixGrammar != null then [ "-L${tree-sitter-nix}/lib" ] else [])
   ) else [];
 
   sources = if enableTreeSitter then ([ "main.c" "highlight.c" ]) else ([ "main.c" ]);
@@ -53,6 +59,7 @@ in stdenv.mkDerivation {
       ${if enableJsonGrammar then "xxd -i -n highlights_json ${tree-sitter-json}/lib/highlights.scm highlights/json.h" else ""}
       ${if enablePythonGrammar then "xxd -i -n highlights_python ${tree-sitter-python}/lib/highlights.scm highlights/python.h" else ""}
       ${if enableBashGrammar then "xxd -i -n highlights_bash ${tree-sitter-bash}/lib/highlights.scm highlights/bash.h" else ""}
+      ${if enableNixGrammar then "xxd -i -n highlights_nix ${tree-sitter-nix}/lib/highlights.scm highlights/nix.h" else ""}
     '' else ""}
     xxd -i -n style_app ./app.css style/app.h
     $CC -static -Wall -Wextra -O3 \
