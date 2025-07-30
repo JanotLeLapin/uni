@@ -219,7 +219,6 @@ main(int argc, char **argv)
   start = clock();
   do {
     ctx.current = cmark_next(&ctx.cmark);
-    fprintf(stderr, "got %d\n", ctx.current.type);
     switch (ctx.current.type) {
     case CMARK_ELEM_HEADING:
       compile_heading(&ctx, &ctx.str);
