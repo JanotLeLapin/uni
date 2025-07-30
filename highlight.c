@@ -62,6 +62,8 @@ highlight(dyn_str_t *dst, cmark_str_t lang, cmark_str_t code)
       if (i < start) {
         dyn_str_append(dst, code.p + i, start - i);
         i = end;
+      } else if (i == start) {
+        i = end;
       } else {
         continue;
       }
