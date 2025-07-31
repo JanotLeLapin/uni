@@ -62,6 +62,15 @@
         enableTreeSitter = false;
         enableTableOfContents = false;
       };
+      notes = pkgs.pkgsMusl.callPackage ./notes {
+        uni = pkgs.pkgsMusl.callPackage ./default.nix {
+          enableTreeSitter = true;
+          enableJsonGrammar = false;
+          enableJavaGrammar = false;
+          enableBashGrammar = false;
+          enableTableOfContents = true;
+        };
+      };
     });
   };
 }
