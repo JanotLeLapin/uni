@@ -1,16 +1,17 @@
 { uni
+, callPackage
 , stdenv
-}: stdenv.mkDerivation {
+}: let
+  uni-meta = callPackage ./meta.nix {};
+in stdenv.mkDerivation {
   name = "uni-notes";
   src = ./.;
-  buildInputs = [ uni ];
+  buildInputs = [ uni uni-meta ];
   buildPhase = ''
-    find "$src" -type f -name "*.md" | while read -r file; do
-      rel_path="''${file#$src/}"
-      dest_file="$out/''${rel_path%.md}.html"
-      content=$(uni "$file")
-      mkdir -p "$(dirname "$dest_file")"
-      echo "$content" > "$dest_file"
-    done
+    uni-meta
+  '';
+  installPhase = ''
+    mkdir -p $out
+    mv index.html $out
   '';
 }
