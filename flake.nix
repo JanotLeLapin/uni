@@ -28,6 +28,11 @@
             version = "0.23.5";
             rev = "94703d5a6bed02b98e438d7cad1136c01a60ba2c";
           } self.pkgsMusl;
+          tree-sitter-c = import ./grammar.nix {
+            lang = "c";
+            version = "0.24.1";
+            rev = "7fa1be1b694b6e763686793d97da01f36a0e5c12";
+          } self.pkgsMusl;
           tree-sitter-bash = import ./grammar.nix {
             lang = "bash";
             version = "0.25.0";

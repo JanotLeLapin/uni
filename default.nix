@@ -3,6 +3,7 @@
 , tree-sitter
 , tree-sitter-json
 , tree-sitter-python
+, tree-sitter-c
 , tree-sitter-bash
 , tree-sitter-nix
 , tree-sitter-java
@@ -14,6 +15,7 @@
 , enableJsonGrammar ? true
 , enablePythonGrammar ? true
 , enableJavaGrammar ? true
+, enableCGrammar ? true
 , enableBashGrammar ? true
 , enableNixGrammar ? true
 , enableTableOfContents ? true
@@ -22,6 +24,7 @@
     { name = "json"; package = tree-sitter-json; enabled = enableJsonGrammar; }
     { name = "python"; package = tree-sitter-python; enabled = enablePythonGrammar; }
     { name = "java"; package = tree-sitter-java; enabled = enableJavaGrammar; }
+    { name = "c"; package = tree-sitter-c; enabled = enableCGrammar; }
     { name = "bash"; package = tree-sitter-bash; enabled = enableBashGrammar; }
     { name = "nix"; package = tree-sitter-nix; enabled = enableNixGrammar; }
   ];

@@ -19,6 +19,11 @@ const TSLanguage *tree_sitter_python(void);
 const TSLanguage *tree_sitter_java(void);
 #endif
 
+#ifdef ENABLE_C_GRAMMAR
+#include "highlights/c.h"
+const TSLanguage *tree_sitter_c(void);
+#endif
+
 #ifdef ENABLE_BASH_GRAMMAR
 #include "highlights/bash.h"
 const TSLanguage *tree_sitter_bash(void);
@@ -57,6 +62,14 @@ find_lang(lang_t *dst, cmark_str_t lang)
     dst->ts = tree_sitter_java();
     dst->highlights = highlights_java;
     dst->highlights_len = highlights_java_len;
+    return 1;
+  }
+  #endif
+  #ifdef ENABLE_C_GRAMMAR
+  else if (CMP_LANG("c", lang)) {
+    dst->ts = tree_sitter_c();
+    dst->highlights = highlights_c;
+    dst->highlights_len = highlights_c_len;
     return 1;
   }
   #endif
