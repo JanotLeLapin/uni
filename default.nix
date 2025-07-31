@@ -9,6 +9,7 @@
 , lib
 , stdenv
 
+, patches ? [ ]
 , enableTreeSitter ? true
 , enableJsonGrammar ? true
 , enablePythonGrammar ? true
@@ -77,6 +78,8 @@ in stdenv.mkDerivation {
   nativeBuildInputs = [ xxd ];
   buildInputs = [ cmarkdown tree-sitter ];
   src = ./.;
+
+  inherit patches;
 
   buildPhase = ''
     mkdir -p style
