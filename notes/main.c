@@ -4,6 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <sys/mman.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
 
@@ -12,9 +13,43 @@
 static int
 compile_file(const char *in, const char *out)
 {
-  pid_t pid = fork();
   int fd;
+  size_t len;
+  char *src, title[256], *p;
+  cmark_ctx_t ctx;
+  cmark_elem_t e;
+  pid_t pid;
 
+  fprintf(stderr, "compiling: %s\n", in);
+
+  fd = open(in, O_RDONLY);
+  len = lseek(fd, 0, SEEK_END);
+  src = mmap(0, len, PROT_READ, MAP_PRIVATE, fd, 0);
+
+  cmark_init_ctx(&ctx, src, len);
+  e = cmark_next(&ctx);
+  if (CMARK_ELEM_HEADING == e.type && 1 == e.heading) {
+    p = title;
+    while (CMARK_ELEM_BREAK != e.type) {
+      e = cmark_next(&ctx);
+      switch (e.type) {
+      case CMARK_ELEM_PLAIN:
+        memcpy(p, e.plain.p, e.plain.len);
+        p += e.plain.len;
+        break;
+      default:
+        break;
+      }
+    }
+    *++p = '\0';
+  } else {
+    strcpy(title, "uni");
+  }
+
+  munmap(src, len);
+  close(fd);
+
+  pid = fork();
   if (0 == pid) {
     fd = open(out, O_WRONLY | O_CREAT | O_TRUNC, 0644);
     if (fd < 0) {
@@ -25,11 +60,10 @@ compile_file(const char *in, const char *out)
     dup2(fd, STDOUT_FILENO);
     close(fd);
 
-    execlp("uni", "uni", in, NULL);
+    execlp("uni", "uni", "--title", title, in, NULL);
     perror("execlp");
     exit(1);
   } else if (0 < pid) {
-    fprintf(stderr, "compiling: %s\n", in);
     wait(NULL);
   } else {
     perror("fork");

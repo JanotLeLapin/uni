@@ -8,7 +8,7 @@
 
   buildInputs = [ cmarkdown ];
   buildPhase = ''
-    $CC -static -Wall -Wextra -O3 main.c -o main
+    $CC -static -Wall -Wextra -O3 main.c -lcmarkdown -o main
   '';
   installPhase = ''
     mkdir -p $out/bin
