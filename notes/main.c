@@ -32,13 +32,12 @@ compile_file(const char *in, const char *out)
     p = title;
     while (CMARK_ELEM_BREAK != e.type) {
       e = cmark_next(&ctx);
-      switch (e.type) {
-      case CMARK_ELEM_PLAIN:
+      if (CMARK_ELEM_PLAIN == e.type) {
+        if (p - title + e.plain.len >= sizeof(title) - 1) {
+          break;
+        }
         memcpy(p, e.plain.p, e.plain.len);
         p += e.plain.len;
-        break;
-      default:
-        break;
       }
     }
     *++p = '\0';
