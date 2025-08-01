@@ -56,12 +56,15 @@
     }));
   in {
     devShells = eachSystem ({ pkgs, ... }: { default = pkgs.callPackage ./shell.nix {}; });
-    packages = eachSystem ({ pkgs, ... }: {
+    packages = eachSystem ({ pkgs, ... }: rec {
       default = pkgs.pkgsMusl.callPackage ./default.nix {};
       minimal = pkgs.pkgsMusl.callPackage ./default.nix {
         enableTreeSitter = false;
         enableTableOfContents = false;
       };
+
+      meta = pkgs.pkgsMusl.callPackage ./meta {};
+
       notes = pkgs.pkgsMusl.callPackage ./notes {
         uni = pkgs.pkgsMusl.callPackage ./default.nix {
           enableTreeSitter = true;
@@ -70,6 +73,7 @@
           enableBashGrammar = false;
           enableTableOfContents = true;
         };
+        uni-meta = meta;
       };
     });
   };

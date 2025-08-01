@@ -1,9 +1,7 @@
 { uni
-, callPackage
+, uni-meta
 , stdenv
-}: let
-  uni-meta = callPackage ./meta.nix {};
-in stdenv.mkDerivation {
+}: stdenv.mkDerivation {
   name = "uni-notes";
   src = ./.;
   buildInputs = [ uni uni-meta ];
