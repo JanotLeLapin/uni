@@ -8,10 +8,10 @@ in stdenv.mkDerivation {
   src = ./.;
   buildInputs = [ uni uni-meta ];
   buildPhase = ''
+    mkdir -p out
     uni-meta
   '';
   installPhase = ''
-    mkdir -p $out
-    mv index.html $out
+    cp -r out $out
   '';
 }
